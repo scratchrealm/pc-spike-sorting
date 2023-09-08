@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+
+from typing import List
+import os
+import numpy as np
+import h5py
+import protocaas.sdk as pr
+import spikeinterface as si
+import remfile
+import pynwb
+from NwbRecording import NwbRecording
+from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
+from run_kilosort3 import run_kilosort3
+
+app = pr.App('kilosort3', help="Kilosort3 spike sorting")
+
+description = """
+Kilosort3 is a spike sorting software package developed by Marius Pachitariu at Janelia Research Campus.
+It uses a GPU-accelerated algorithm to detect, align, and cluster spikes across many channels.
+Building on previous versions, Kilosort3 offers improved efficiency and accuracy in the extraction of neural spike waveforms from multichannel electrophysiological recordings.
+By leveraging parallel processing capabilities of modern GPUs, it enables sorting with minimal manual intervention.
+This tool has become an essential part of the workflow many electrophysiology labs.
+For more information see https://github.com/MouseLand/Kilosort
+"""
+
+@pr.processor('kilosort3', help=description)
+@pr.attribute('wip', True)
+@pr.attribute('label', 'Kilosort 3')
+@pr.tags(['spike_sorting', 'spike_sorter'])
+@pr.input('input', help='input .nwb file')
+@pr.output('output', help='output .nwb file')
+@pr.parameter('electrical_series_path', type=str, help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
+@pr.parameter('detect_threshold', type=float, default=6, help='Threshold for spike detection')
+@pr.parameter('projection_threshold', type=List[float], default=[9, 9], help='Threshold on projections')
+@pr.parameter('preclust_threshold', type=float, default=8, help='Threshold crossings for pre-clustering (in PCA projection space)')
+@pr.parameter('car', type=bool, default=True, help='Enable or disable common reference')
+@pr.parameter('minFR', type=float, default=0.2, help='Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed')
+@pr.parameter('minfr_goodchannels', type=float, default=0.2, help='Minimum firing rate on a "good" channel')
+@pr.parameter('nblocks', type=int, default=5, help='blocks for registration. 0 turns it off, 1 does rigid registration. Replaces "datashift" option.')
+@pr.parameter('sig', type=int, default=20, help='spatial smoothness constant for registration')
+@pr.parameter('freq_min', type=int, default=300, help='High-pass filter cutoff frequency')
+@pr.parameter('sigmaMask', type=int, default=30, help='Spatial constant in um for computing residual variance of spike')
+@pr.parameter('nPCs', type=int, default=3, help='Number of PCA dimensions')
+@pr.parameter('ntbuff', type=int, default=64, help='Samples of symmetrical buffer for whitening and spike detection')
+@pr.parameter('nfilt_factor', type=int, default=4, help='Max number of clusters per good channel (even temporary ones) 4')
+@pr.parameter('do_correction', type=bool, default=True, help='If True drift registration is applied')
+@pr.parameter('NT', type=int, default=-1, help='Batch size (if -1 it is automatically computed)')
+@pr.parameter('AUCsplit', type=float, default=0.8, help='Threshold on the area under the curve (AUC) criterion for performing a split in the final step')
+@pr.parameter('wave_length', type=int, default=61, help='size of the waveform extracted around each detected peak, (Default 61, maximum 81)')
+@pr.parameter('keep_good_only', type=bool, default=False, help='If True only "good" units are returned')
+@pr.parameter('skip_kilosort_preprocessing', type=bool, default=False, help='Can optionaly skip the internal kilosort preprocessing')
+@pr.parameter('scaleproc', type=int, default=-1, help='int16 scaling of whitened data, if -1 set to 200.')
+@pr.parameter('test_duration_sec', type=float, default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
+def kilosort3(
+    input: pr.InputFile,
+    output: pr.OutputFile,
+    electrical_series_path: str,
+    detect_threshold: float,
+    projection_threshold: List[float],
+    preclust_threshold: float,
+    car: bool,
+    minFR: float,
+    minfr_goodchannels: float,
+    nblocks: int,
+    sig: int,
+    freq_min: int,
+    sigmaMask: int,
+    nPCs: int,
+    ntbuff: int,
+    nfilt_factor: int,
+    do_correction: bool,
+    NT: int,
+    AUCsplit: float,
+    wave_length: int,
+    keep_good_only: bool,
+    skip_kilosort_preprocessing: bool,
+    scaleproc: int,
+    test_duration_sec: float
+):
+    print('Starting kilosort3 processor')
+    nwb_url = input.get_url()
+    print(f'Input NWB URL: {nwb_url}')
+
+    # open the remote file
+    print('Opening remote input file')
+    disk_cache = remfile.DiskCache('/tmp/remfile_cache')
+    remf = remfile.File(nwb_url, disk_cache=disk_cache)
+    f = h5py.File(remf, 'r')
+
+    print('Creating input recording')
+    recording = NwbRecording(
+        file=f,
+        electrical_series_path=electrical_series_path
+    )
+
+    if test_duration_sec > 0:
+        recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
+
+    # important to make a binary recording so that it can be serialized in the format expected by kilosort
+    # it's important that it's a single segment with int16 dtype
+    # during this step, the entire recording will be downloaded to disk
+    print('Creating binary recording')
+    recording2 = _make_binary_recording(recording)
+
+    # run kilosort3 in the container
+    print('Preparing kilosort3')
+    container_method = os.getenv('CONTAINER_METHOD', 'none')
+    sorting_params = {
+        'detect_threshold': detect_threshold,
+        'projection_threshold': projection_threshold,
+        'preclust_threshold': preclust_threshold,
+        'car': car,
+        'minFR': minFR,
+        'minfr_goodchannels': minfr_goodchannels,
+        'nblocks': nblocks,
+        'sig': sig,
+        'freq_min': freq_min,
+        'sigmaMask': sigmaMask,
+        'nPCs': nPCs,
+        'ntbuff': ntbuff,
+        'nfilt_factor': nfilt_factor,
+        'do_correction': do_correction,
+        'NT': NT if NT >= 0 else None,
+        'AUCsplit': AUCsplit,
+        'wave_length': wave_length,
+        'keep_good_only': keep_good_only,
+        'skip_kilosort_preprocessing': skip_kilosort_preprocessing,
+        'scaleproc': scaleproc if scaleproc >= 0 else None
+    }
+
+    print('Running kilosort3')
+    os.mkdir('working')
+    sorting = run_kilosort3(
+        recording=recording2,
+        sorting_params=sorting_params,
+        output_folder='working',
+        use_docker=container_method == 'docker',
+        use_singularity=container_method == 'singularity'
+    )
+
+    print('Writing output NWB file')
+    with pynwb.NWBHDF5IO(file=h5py.File(remf, 'r'), mode='r') as io:
+        nwbfile_rec = io.read()
+        
+        if not os.path.exists('output'):
+            os.mkdir('output')
+        sorting_out_fname = 'output/sorting.nwb'
+
+        create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
+    
+    print('Uploading output NWB file')
+    output.set(sorting_out_fname)
+
+def _make_binary_recording(recording: si.BaseRecording) -> si.BinaryRecordingExtractor:
+    os.mkdir('binary_recording')
+    fname = 'binary_recording/recording.dat'
+    if recording.get_num_segments() != 1:
+        raise NotImplementedError("Can only write recordings with a single segment")
+    if recording.get_dtype() != np.int16:
+        raise NotImplementedError("Can only write recordings with dtype int16") # important so it won't be rewritten for kilosort3
+    si.BinaryRecordingExtractor.write_recording(
+        recording=recording,
+        file_paths=[fname],
+        dtype='int16'
+    )
+    ret = si.BinaryRecordingExtractor(
+        file_paths=[fname],
+        sampling_frequency=recording.get_sampling_frequency(),
+        channel_ids=recording.get_channel_ids(),
+        num_chan=recording.get_num_channels(),
+        dtype='int16'
+    )
+    ret.set_channel_locations(recording.get_channel_locations())
+    return ret
+
+app.add_processor(kilosort3)
+
+if __name__ == '__main__':
+    app.run()

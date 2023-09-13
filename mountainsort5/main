@@ -83,6 +83,7 @@ def mountainsort5(
 
     # open the remote file
     print('Opening remote input file')
+    # Use a disk cache because we are going to be doing random access
     disk_cache = remfile.DiskCache('/tmp/remfile_cache')
     remf = remfile.File(nwb_url, disk_cache=disk_cache)
     f = h5py.File(remf, 'r')

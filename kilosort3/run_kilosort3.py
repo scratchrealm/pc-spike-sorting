@@ -205,7 +205,14 @@ def run_kilosort3(
         #     client_instance.stop()
     else:
         print(f'Executing command: {command_in_container}')
-        subprocess.run(command_in_container, shell=True)
+        subprocess.run(
+            command_in_container,
+            shell=True,
+            env={
+                **os.environ,
+                'HOME': '/tmp' # we set /tmp to be the home dir because ks3_compiled prepares matlab runtime stuff in the home dir, and that may not exist if this whole thing is running in singularity using the --contain flag
+            }
+        )
     
     # load output
     keep_good_only = sorting_params.get("keep_good_only", True)

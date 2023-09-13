@@ -83,8 +83,9 @@ def kilosort3(
 
     # open the remote file
     print('Opening remote input file')
-    disk_cache = remfile.DiskCache('/tmp/remfile_cache')
-    remf = remfile.File(nwb_url, disk_cache=disk_cache)
+    # don't use a disk cache, because we're only going to write it once
+    # disk_cache = remfile.DiskCache('/tmp/remfile_cache')
+    remf = remfile.File(nwb_url) # disk_cache=disk_cache
     f = h5py.File(remf, 'r')
 
     print('Creating input recording')

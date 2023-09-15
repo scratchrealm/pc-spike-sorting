@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
-from typing import List
 import os
-import numpy as np
 import h5py
 import protocaas.sdk as pr
 import spikeinterface as si
 import remfile
 import pynwb
-from enum import Enum
 from NwbRecording import NwbRecording
 from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
 import spikeinterface.preprocessing as spre
@@ -171,7 +168,92 @@ def mountainsort5(
     print('Uploading output NWB file')
     output.set(sorting_out_fname)
 
+description_quicktest = """
+For running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.
+"""
+
+@pr.processor('ms5_quicktest', help=description_quicktest)
+@pr.attribute('wip', True)
+@pr.attribute('label', 'MountainSort5 Quick Test')
+@pr.tags(['spike_sorting', 'spike_sorter'])
+@pr.input('input', help='input .nwb file')
+@pr.output('output', help='output .nwb file')
+@pr.parameter('electrical_series_path', type=str, help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
+@pr.parameter('test_duration_sec', type=float, default=60, help='For testing purposes: duration of the recording in seconds (0 means all)')
+def ms5_quicktest(
+    input: pr.InputFile,
+    output: pr.OutputFile,
+    electrical_series_path: str,
+    test_duration_sec: float
+):
+    print('Starting ms5_quicktest processor')
+    nwb_url = input.get_url()
+    print(f'Input NWB URL: {nwb_url}')
+
+    # open the remote file
+    print('Opening remote input file')
+    # Use a disk cache because we are going to be doing random access
+    disk_cache = remfile.DiskCache('/tmp/remfile_cache')
+    remf = remfile.File(nwb_url, disk_cache=disk_cache)
+    f = h5py.File(remf, 'r')
+
+    print('Creating input recording')
+    recording = NwbRecording(
+        file=f,
+        electrical_series_path=electrical_series_path
+    )
+
+    if test_duration_sec > 0:
+        recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
+
+    freq_min = 300
+    freq_max = 6000
+    detect_threshold = 5.5
+    detect_channel_radius = 150
+    detect_time_radius_msec = 0.5
+    detect_sign = -1
+    snippet_T1 = 20
+    snippet_T2 = 20
+    snippet_mask_radius = 250
+    npca_per_channel = 3
+    npca_per_subdivision = 10
+
+    # Make sure the recording is preprocessed appropriately
+    # lazy preprocessing
+    recording_filtered = spre.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
+    recording_preprocessed: si.BaseRecording = spre.whiten(recording_filtered, dtype='float32')
+
+    print('Setting up sorting parameters')
+    scheme1_sorting_parameters = ms5.Scheme1SortingParameters(
+        detect_threshold=detect_threshold,
+        detect_channel_radius=detect_channel_radius,
+        detect_time_radius_msec=detect_time_radius_msec,
+        detect_sign=detect_sign,
+        snippet_T1=snippet_T1,
+        snippet_T2=snippet_T2,
+        snippet_mask_radius=snippet_mask_radius,
+        npca_per_channel=npca_per_channel,
+        npca_per_subdivision=npca_per_subdivision
+    )
+
+    print('Sorting scheme 1')
+    sorting = ms5.sorting_scheme1(recording=recording_preprocessed, sorting_parameters=scheme1_sorting_parameters)
+
+    print('Writing output NWB file')
+    with pynwb.NWBHDF5IO(file=h5py.File(remf, 'r'), mode='r') as io:
+        nwbfile_rec = io.read()
+        
+        if not os.path.exists('output'):
+            os.mkdir('output')
+        sorting_out_fname = 'output/sorting.nwb'
+
+        create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
+    
+    print('Uploading output NWB file')
+    output.set(sorting_out_fname)
+
 app.add_processor(mountainsort5)
+app.add_processor(ms5_quicktest)
 
 if __name__ == '__main__':
     app.run()

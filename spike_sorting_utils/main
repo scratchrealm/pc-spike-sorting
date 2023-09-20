@@ -26,7 +26,7 @@ Create summary data for a spike sorting run.
 @pr.input('sorting', help='sorting .nwb file')
 @pr.output('output', help='output .figurl file')
 @pr.parameter('electrical_series_path', type=str, help='Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries')
-def spike_sorting_summary(
+def spike_sorting_figurl(
     recording: pr.InputFile,
     sorting: pr.InputFile,
     output: pr.OutputFile,

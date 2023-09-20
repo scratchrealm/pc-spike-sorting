@@ -7,13 +7,17 @@ RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && ec
     cd /src/protocaas/python && \
     pip install -e .
 
-# Install mountainsort5
-RUN pip install mountainsort5
-
 # Install pynwb
 RUN pip install pynwb
 
+# Install spikeinterface
+RUN pip install spikeinterface
+
+# Install sortingview
+RUN pip install sortingview
+
 # Copy files into the container
 RUN mkdir /app
+COPY helpers /app/helpers
 COPY *.py /app/
 COPY main /app/main

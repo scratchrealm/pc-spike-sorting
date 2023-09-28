@@ -3,7 +3,7 @@ FROM spikeinterface/kilosort3-compiled-base
 RUN mkdir /src
 
 # Install protocaas from source, for now
-RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && echo "v8" && \
+RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && echo "v9" && \
     cd /src/protocaas/python && \
     pip install -e .
 

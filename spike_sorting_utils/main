@@ -88,7 +88,7 @@ def spike_sorting_figurl(
     print('Uploading output file')
     output.set(output_fname)
 
-app.add_processor(spike_sorting_summary)
+app.add_processor(spike_sorting_figurl)
 
 if __name__ == '__main__':
     app.run()

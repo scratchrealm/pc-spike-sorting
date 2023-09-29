@@ -13,18 +13,6 @@ description = """
 Upload files to a dandiset on DANDI.
 """
 
-def _make_sure_path_is_relative_and_is_safe(path):
-    if path.startswith('/'):
-        raise Exception('Path cannot start with /')
-    components = path.split('/')
-    for comp in components:
-        if comp == '.':
-            raise Exception('Path cannot contain .')
-        if comp == '..':
-            raise Exception('Path cannot contain ..')
-        if comp == '':
-            raise Exception('Path cannot contain empty component')
-
 @pr.processor('dandi_upload', help=description)
 @pr.attribute('wip', True)
 @pr.attribute('label', 'DANDI upload')
@@ -96,6 +84,18 @@ def dandi_upload(
             raise Exception(f'Error running dandi upload: {result.stderr}')
     finally:
         shutil.rmtree(workdir)
+
+def _make_sure_path_is_relative_and_is_safe(path):
+    if path.startswith('/'):
+        raise Exception('Path cannot start with /')
+    components = path.split('/')
+    for comp in components:
+        if comp == '.':
+            raise Exception('Path cannot contain .')
+        if comp == '..':
+            raise Exception('Path cannot contain ..')
+        if comp == '':
+            raise Exception('Path cannot contain empty component')
 
 app.add_processor(dandi_upload)
 

@@ -15,18 +15,6 @@ description = """
 Upload files to a dandiset on DANDI.
 """
 
-def _make_sure_path_is_relative_and_is_safe(path):
-    if path.startswith('/'):
-        raise Exception('Path cannot start with /')
-    components = path.split('/')
-    for comp in components:
-        if comp == '.':
-            raise Exception('Path cannot contain .')
-        if comp == '..':
-            raise Exception('Path cannot contain ..')
-        if comp == '':
-            raise Exception('Path cannot contain empty component')
-
 @pr.processor('dandi_upload', help=description)
 @pr.attribute('wip', True)
 @pr.attribute('label', 'DANDI upload')
@@ -164,6 +152,18 @@ def _set_was_generated_by(
         print(res.json())
         raise Exception('Failed to update metadata for asset')
     
+
+def _make_sure_path_is_relative_and_is_safe(path):
+    if path.startswith('/'):
+        raise Exception('Path cannot start with /')
+    components = path.split('/')
+    for comp in components:
+        if comp == '.':
+            raise Exception('Path cannot contain .')
+        if comp == '..':
+            raise Exception('Path cannot contain ..')
+        if comp == '':
+            raise Exception('Path cannot contain empty component')
 
 app.add_processor(dandi_upload)
 

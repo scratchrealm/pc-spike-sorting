@@ -14,7 +14,7 @@ import mountainsort5 as ms5
 # Use this whiten.py rather than the one in spikeinterface
 # until the following issue is resolved:
 # https://github.com/SpikeInterface/spikeinterface/issues/2064
-from whiten import whiten
+from whiten import whiten as whiten_function
 
 
 app = pr.App('mountainsort5', help="MountainSort5 spike sorting")
@@ -110,7 +110,7 @@ def mountainsort5(
     if whiten:
         print('Whitening on')
         # recording_preprocessed: si.BaseRecording = spre.whiten(recording_filtered, dtype='float32')
-        recording_preprocessed: si.BaseRecording = whiten(recording_filtered, dtype='float32') # see comment above about whiten.py
+        recording_preprocessed: si.BaseRecording = whiten_function(recording_filtered, dtype='float32') # see comment above about whiten.py
     else:
         print('Whitening off')
         recording_preprocessed = recording_filtered

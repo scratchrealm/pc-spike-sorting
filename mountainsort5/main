@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import numpy as np
 import h5py
 import protocaas.sdk as pr
 import spikeinterface as si
@@ -10,11 +11,6 @@ from NwbRecording import NwbRecording
 from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
 import spikeinterface.preprocessing as spre
 import mountainsort5 as ms5
-
-# Use this whiten.py rather than the one in spikeinterface
-# until the following issue is resolved:
-# https://github.com/SpikeInterface/spikeinterface/issues/2064
-from whiten import whiten as whiten_function
 
 
 app = pr.App('mountainsort5', help="MountainSort5 spike sorting")
@@ -109,8 +105,9 @@ def mountainsort5(
         recording_filtered = recording
     if whiten:
         print('Whitening on')
-        # recording_preprocessed: si.BaseRecording = spre.whiten(recording_filtered, dtype='float32')
-        recording_preprocessed: si.BaseRecording = whiten_function(recording_filtered, dtype='float32') # see comment above about whiten.py
+        # see comment below in _scale_recording_if_float_type
+        recording_scaled = _scale_recording_if_float_type(recording_filtered)
+        recording_preprocessed: si.BaseRecording = spre.whiten(recording_scaled, dtype='float32')
     else:
         print('Whitening off')
         recording_preprocessed = recording_filtered
@@ -174,6 +171,35 @@ def mountainsort5(
     print('Uploading output NWB file')
     output.set(sorting_out_fname)
 
+def _scale_recording_if_float_type(recording: si.BaseRecording) -> si.BaseRecording:
+    """
+    The purpose of this function is to scale a float recording into a reasonable range
+    so that whitening will work properly. The exact scaling factor doesn't matter. This
+    is a workaround for this issue with whitening:
+    https://github.com/SpikeInterface/spikeinterface/issues/2064
+    """
+    if np.dtype(recording.dype).kind == 'f': # floating point
+        pass
+    elif np.dtype(recording.dype).kind in ['u', 'i']: # integer
+        return recording
+    else:
+        raise Exception(f'Unexpected recording dtype: {recording.dtype}')
+
+    print('Scaling float recording')
+
+    # get the first 1000 samples
+    traces0 = recording.get_traces(segment_index=0, start_frame=0, end_frame=1000)
+
+    # get the median absolute value
+    med_abs_val = np.median(np.abs(traces0))
+    if not med_abs_val:
+        raise Exception('Median absolute value is zero')
+
+    # scale the recording so that the median absolute value is 1
+    recording_scaled = spre.scale(recording, gain=1 / med_abs_val)
+
+    return recording_scaled
+
 description_quicktest = """
 For running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.
 """
@@ -227,7 +253,8 @@ def ms5_quicktest(
     # Make sure the recording is preprocessed appropriately
     # lazy preprocessing
     recording_filtered = spre.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
-    recording_preprocessed: si.BaseRecording = spre.whiten(recording_filtered, dtype='float32')
+    recording_scaled = _scale_recording_if_float_type(recording_filtered)
+    recording_preprocessed: si.BaseRecording = spre.whiten(recording_scaled, dtype='float32')
 
     print('Setting up sorting parameters')
     scheme1_sorting_parameters = ms5.Scheme1SortingParameters(

@@ -8,7 +8,7 @@ RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && ec
     pip install -e .
 
 # Install mountainsort5
-RUN pip install mountainsort5
+RUN pip install mountainsort5>=0.3.1
 
 # Install pynwb
 RUN pip install pynwb

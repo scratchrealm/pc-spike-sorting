@@ -158,7 +158,8 @@ def _make_binary_recording(recording: si.BaseRecording) -> si.BinaryRecordingExt
     if recording.get_num_segments() != 1:
         raise NotImplementedError("Can only write recordings with a single segment")
     if recording.get_dtype() != np.int16:
-        raise NotImplementedError("Can only write recordings with dtype int16") # important so it won't be rewritten for kilosort3
+        # important so it won't be rewritten for kilosort3
+        raise NotImplementedError(f"Can only write recordings with dtype int16. This recording has dtype {recording.get_dtype()}")
     si.BinaryRecordingExtractor.write_recording(
         recording=recording,
         file_paths=[fname],

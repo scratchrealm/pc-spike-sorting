@@ -2,10 +2,12 @@
 
 from typing import List
 import os
+import shutil
 import numpy as np
 import h5py
 import protocaas.sdk as pr
 import spikeinterface as si
+import spikeinterface.preprocessing as spre
 import remfile
 import pynwb
 from NwbRecording import NwbRecording
@@ -83,9 +85,7 @@ def kilosort3(
 
     # open the remote file
     print('Opening remote input file')
-    # don't use a disk cache, because we're only going to write it once
-    # disk_cache = remfile.DiskCache('/tmp/remfile_cache')
-    remf = remfile.File(nwb_url) # disk_cache=disk_cache
+    remf = remfile.File(nwb_url)
     f = h5py.File(remf, 'r')
 
     print('Creating input recording')
@@ -101,11 +101,10 @@ def kilosort3(
     # it's important that it's a single segment with int16 dtype
     # during this step, the entire recording will be downloaded to disk
     print('Creating binary recording')
-    recording2 = _make_binary_recording(recording)
+    recording_binary = _make_binary_recording(recording)
 
-    # run kilosort3 in the container
+    # run kilosort3
     print('Preparing kilosort3')
-    container_method = os.getenv('CONTAINER_METHOD', 'none')
     sorting_params = {
         'detect_threshold': detect_threshold,
         'projection_threshold': projection_threshold,
@@ -132,11 +131,11 @@ def kilosort3(
     print('Running kilosort3')
     os.mkdir('working')
     sorting = run_kilosort3(
-        recording=recording2,
+        recording=recording_binary,
         sorting_params=sorting_params,
         output_folder='working',
-        use_docker=container_method == 'docker',
-        use_singularity=container_method == 'singularity'
+        use_docker=False, # False does NOT mean that this whole function is not running in a protocaas container
+        use_singularity=False # False does NOT mean that this whole function is not running in a protocaas container
     )
 
     print('Writing output NWB file')
@@ -153,13 +152,26 @@ def kilosort3(
     output.set(sorting_out_fname)
 
 def _make_binary_recording(recording: si.BaseRecording) -> si.BinaryRecordingExtractor:
-    os.mkdir('binary_recording')
-    fname = 'binary_recording/recording.dat'
+    dirname = '/tmp/binary_recording'
+    if os.path.exists(dirname):
+        shutil.rmtree(dirname)
+    os.mkdir(dirname)
+    fname = f'{dirname}/recording.dat'
     if recording.get_num_segments() != 1:
         raise NotImplementedError("Can only write recordings with a single segment")
-    if recording.get_dtype() != np.int16:
-        # important so it won't be rewritten for kilosort3
-        raise NotImplementedError(f"Can only write recordings with dtype int16. This recording has dtype {recording.get_dtype()}")
+    if recording.get_dtype().kind == 'f':
+        # need to scale data so we don't lose precision
+        # Look at the first ten seconds of data
+        traces0 = recording.get_traces(start_frame=0, end_frame=int(recording.get_sampling_frequency() * 10))
+        max_abs_val = np.max(np.abs(traces0))
+        median_abs_val = np.median(np.abs(traces0))
+        scale_factor = _determine_optimal_scale_factor_for_int16(max_abs_val=max_abs_val, median_abs_val=median_abs_val)
+        if scale_factor != 1:
+            recording = spre.scale(recording, gain=scale_factor)
+
+    # if recording.get_dtype() != np.int16:
+    #     # important so it won't be rewritten for kilosort3
+    #     raise NotImplementedError(f"Can only write recordings with dtype int16. This recording has dtype {recording.get_dtype()}")
     si.BinaryRecordingExtractor.write_recording(
         recording=recording,
         file_paths=[fname],
@@ -174,6 +186,21 @@ def _make_binary_recording(recording: si.BaseRecording) -> si.BinaryRecordingExt
     )
     ret.set_channel_locations(recording.get_channel_locations())
     return ret
+
+def _determine_optimal_scale_factor_for_int16(*, max_abs_val, median_abs_val):
+    """
+    Determine the optimal scale factor for int16 data.
+    """
+    # We want the median abs val to be between 20 and 100
+    # And the max abs val should be less than 5000 (The strict max is 32767, but we are being conservative because we are only examining a small portion of the data)
+    scale_factor = 1
+    if median_abs_val * scale_factor < 20:
+        scale_factor = 20 / median_abs_val
+    if median_abs_val * scale_factor > 100:
+        scale_factor = 100 / median_abs_val
+    if max_abs_val * scale_factor > 5000:
+        scale_factor = 5000 / max_abs_val
+    return scale_factor
 
 description_quicktest = """
 For running tests. Runs Kilosort 3 with default parameters on the first portion of the recording.
@@ -199,9 +226,7 @@ def ks3_quicktest(
 
     # open the remote file
     print('Opening remote input file')
-    # Use a disk cache because we are going to be doing random access
-    disk_cache = remfile.DiskCache('/tmp/remfile_cache')
-    remf = remfile.File(nwb_url, disk_cache=disk_cache)
+    remf = remfile.File(nwb_url)
     f = h5py.File(remf, 'r')
 
     print('Creating input recording')
@@ -215,11 +240,10 @@ def ks3_quicktest(
     
     # important to make a binary recording (see above)
     print('Creating binary recording')
-    recording2 = _make_binary_recording(recording)
+    recording_binary = _make_binary_recording(recording)
 
-    # run kilosort3 in the container
+    # run kilosort3
     print('Preparing kilosort3')
-    container_method = os.getenv('CONTAINER_METHOD', 'none')
     sorting_params = {
         'detect_threshold': 6,
         'projection_threshold': [9, 9],
@@ -235,7 +259,7 @@ def ks3_quicktest(
         'ntbuff': 64,
         'nfilt_factor': 4,
         'do_correction': True,
-        'NT': NT if NT >= 0 else None,
+        'NT': None,
         'AUCsplit': 0.8,
         'wave_length': 61,
         'keep_good_only': False,
@@ -246,11 +270,11 @@ def ks3_quicktest(
     print('Running kilosort3')
     os.mkdir('working')
     sorting = run_kilosort3(
-        recording=recording2,
+        recording=recording_binary,
         sorting_params=sorting_params,
         output_folder='working',
-        use_docker=container_method == 'docker',
-        use_singularity=container_method == 'singularity'
+        use_docker=False, # False does NOT mean that this whole function is not running in a protocaas container
+        use_singularity=False # False does NOT mean that this whole function is not running in a protocaas container
     )
 
     print('Writing output NWB file')

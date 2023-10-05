@@ -29,18 +29,20 @@ class NwbRecording(si.BaseRecording):
         si.BaseRecording.__init__(self, channel_ids=channel_ids, sampling_frequency=sampling_frequency, dtype=dtype)
         
         # Set electrode locations
-        if 'x' in electrodes_table:
-            channel_loc_x = [electrodes_table['x'][i] for i in electrode_indices]
-            channel_loc_y = [electrodes_table['y'][i] for i in electrode_indices]
-            if 'z' in electrodes_table:
-                channel_loc_z = [electrodes_table['z'][i] for i in electrode_indices]
-            else:
-                channel_loc_z = None
-        elif 'rel_x' in electrodes_table:
+        if 'rel_x' in electrodes_table:
+            # It's important to check for rel_x first before x!
+            # see: https://github.com/SpikeInterface/spikeinterface/issues/2073
             channel_loc_x = [electrodes_table['rel_x'][i] for i in electrode_indices]
             channel_loc_y = [electrodes_table['rel_y'][i] for i in electrode_indices]
             if 'rel_z' in electrodes_table:
                 channel_loc_z = [electrodes_table['rel_z'][i] for i in electrode_indices]
+            else:
+                channel_loc_z = None
+        elif 'x' in electrodes_table:
+            channel_loc_x = [electrodes_table['x'][i] for i in electrode_indices]
+            channel_loc_y = [electrodes_table['y'][i] for i in electrode_indices]
+            if 'z' in electrodes_table:
+                channel_loc_z = [electrodes_table['z'][i] for i in electrode_indices]
             else:
                 channel_loc_z = None
         else:

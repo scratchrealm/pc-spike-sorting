@@ -115,7 +115,7 @@ def kilosort2_5(
         'ntbuff': ntbuff,
         'nfilt_factor': nfilt_factor,
         'do_correction': do_correction,
-        'NT': NT,
+        'NT': NT if NT >= 0 else None,
         'AUCsplit': AUCsplit,
         'wave_length': wave_length,
         'keep_good_only': keep_good_only,

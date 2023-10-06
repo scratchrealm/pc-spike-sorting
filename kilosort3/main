@@ -14,6 +14,7 @@ from NwbRecording import NwbRecording
 from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
 from run_kilosort3 import run_kilosort3
 from make_int16_recording import make_int16_recording
+from print_elapsed_time import print_elapsed_time, start_timer
 
 app = pr.App('kilosort3', help="Kilosort3 spike sorting")
 
@@ -81,19 +82,20 @@ def kilosort3(
     test_duration_sec: float
 ):
     print('Starting kilosort3 processor')
-    nwb_url = input.get_url()
-    print(f'Input NWB URL: {nwb_url}')
+    start_timer()
 
     # open the remote file
     print('Opening remote input file')
-    remf = remfile.File(nwb_url)
+    remf = remfile.File(input.get_url())
     f = h5py.File(remf, 'r')
+    print_elapsed_time()
 
     print('Creating input recording')
     recording = NwbRecording(
         file=f,
         electrical_series_path=electrical_series_path
     )
+    print_elapsed_time()
 
     if test_duration_sec > 0:
         recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
@@ -103,6 +105,7 @@ def kilosort3(
     # during this step, the entire recording will be downloaded to disk
     print('Creating binary recording')
     recording_binary = make_int16_recording(recording, dirname='/tmp/int16_recording')
+    print_elapsed_time()
 
     # run kilosort3
     print('Preparing kilosort3')
@@ -134,13 +137,18 @@ def kilosort3(
     sorting = run_kilosort3(
         recording=recording_binary,
         sorting_params=sorting_params,
-        output_folder='working',
-        use_docker=False, # False does NOT mean that this whole function is not running in a protocaas container
-        use_singularity=False # False does NOT mean that this whole function is not running in a protocaas container
+        output_folder='working'
     )
+    print_elapsed_time()
+
+    # open the remote file again because the signed download url may have expired
+    print('Opening remote input file')
+    remf = remfile.File(input.get_url())
+    f = h5py.File(remf, 'r')
+    print_elapsed_time()
 
     print('Writing output NWB file')
-    with pynwb.NWBHDF5IO(file=h5py.File(remf, 'r'), mode='r') as io:
+    with pynwb.NWBHDF5IO(file=f, mode='r', load_namespaces=True) as io:
         nwbfile_rec = io.read()
         
         if not os.path.exists('output'):
@@ -148,9 +156,11 @@ def kilosort3(
         sorting_out_fname = 'output/sorting.nwb'
 
         create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
+    print_elapsed_time()
     
     print('Uploading output NWB file')
     output.set(sorting_out_fname)
+    print_elapsed_time()
 
 description_quicktest = """
 For running tests. Runs Kilosort 3 with default parameters on the first portion of the recording.
@@ -170,75 +180,12 @@ def ks3_quicktest(
     electrical_series_path: str,
     test_duration_sec: float
 ):
-    print('Starting ks3_quicktest processor')
-    nwb_url = input.get_url()
-    print(f'Input NWB URL: {nwb_url}')
-
-    # open the remote file
-    print('Opening remote input file')
-    remf = remfile.File(nwb_url)
-    f = h5py.File(remf, 'r')
-
-    print('Creating input recording')
-    recording = NwbRecording(
-        file=f,
-        electrical_series_path=electrical_series_path
+    kilosort3(
+        input=input,
+        output=output,
+        electrical_series_path=electrical_series_path,
+        test_duration_sec=test_duration_sec
     )
-
-    if test_duration_sec > 0:
-        recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
-    
-    # important to make a binary recording (see above)
-    print('Creating binary recording')
-    recording_binary = make_int16_recording(recording, dirname='/tmp/int16_recording')
-
-    # run kilosort3
-    print('Preparing kilosort3')
-    sorting_params = {
-        'detect_threshold': 6,
-        'projection_threshold': [9, 9],
-        'preclust_threshold': 8,
-        'car': True,
-        'minFR': 0.2,
-        'minfr_goodchannels': 0.2,
-        'nblocks': 5,
-        'sig': 20,
-        'freq_min': 300,
-        'sigmaMask': 30,
-        'nPCs': 3,
-        'ntbuff': 64,
-        'nfilt_factor': 4,
-        'do_correction': True,
-        'NT': None,
-        'AUCsplit': 0.8,
-        'wave_length': 61,
-        'keep_good_only': False,
-        'skip_kilosort_preprocessing': False,
-        'scaleproc': None
-    }
-
-    print('Running kilosort3')
-    os.mkdir('working')
-    sorting = run_kilosort3(
-        recording=recording_binary,
-        sorting_params=sorting_params,
-        output_folder='working',
-        use_docker=False, # False does NOT mean that this whole function is not running in a protocaas container
-        use_singularity=False # False does NOT mean that this whole function is not running in a protocaas container
-    )
-
-    print('Writing output NWB file')
-    with pynwb.NWBHDF5IO(file=h5py.File(remf, 'r'), mode='r') as io:
-        nwbfile_rec = io.read()
-        
-        if not os.path.exists('output'):
-            os.mkdir('output')
-        sorting_out_fname = 'output/sorting.nwb'
-
-        create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
-    
-    print('Uploading output NWB file')
-    output.set(sorting_out_fname)
 
 app.add_processor(kilosort3)
 app.add_processor(ks3_quicktest)

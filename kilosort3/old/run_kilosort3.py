@@ -75,7 +75,7 @@ def run_kilosort3(
     print('Checking recording')
     if recording.get_num_segments() > 1:
         raise NotImplementedError("Multi-segment recordings are not supported yet")
-    if recording.dtype != "int16":
+    if recording.get_dtype().kind != 'i':
         raise ValueError("Recording dtype must be int16")
     
     # check installation

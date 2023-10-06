@@ -11,6 +11,8 @@ from NwbRecording import NwbRecording
 from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
 import spikeinterface.preprocessing as spre
 import mountainsort5 as ms5
+from make_float32_recording import make_float32_recording
+from print_elapsed_time import print_elapsed_time, start_timer
 
 
 app = pr.App('mountainsort5', help="MountainSort5 spike sorting")
@@ -76,21 +78,21 @@ def mountainsort5(
     test_duration_sec: float
 ):
     print('Starting mountainsort5 processor')
-    nwb_url = input.get_url()
-    print(f'Input NWB URL: {nwb_url}')
+    start_timer()
 
+    
     # open the remote file
     print('Opening remote input file')
-    # Use a disk cache because we are going to be doing random access
-    disk_cache = remfile.DiskCache('/tmp/remfile_cache')
-    remf = remfile.File(nwb_url, disk_cache=disk_cache)
+    remf = remfile.File(input.get_url())
     f = h5py.File(remf, 'r')
+    print_elapsed_time()
 
     print('Creating input recording')
     recording = NwbRecording(
         file=f,
         electrical_series_path=electrical_series_path
     )
+    print_elapsed_time()
 
     if test_duration_sec > 0:
         recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
@@ -111,6 +113,15 @@ def mountainsort5(
     else:
         print('Whitening off')
         recording_preprocessed = recording_filtered
+    print_elapsed_time()
+    
+    # Maybe sometime in the future we will spike sort while lazy loading
+    # but for now we're going to download the entire recording to disk first.
+    # Probably lazy loading in a smart way would be in order for scheme 3
+    # at some point in the future.
+    print('Creating binary recording')
+    recording_binary = make_float32_recording(recording_preprocessed, dirname='/tmp/preprocessed_recording')
+    print_elapsed_time()
 
     print('Setting up sorting parameters')
     scheme1_sorting_parameters = ms5.Scheme1SortingParameters(
@@ -150,16 +161,25 @@ def mountainsort5(
 
     if scheme == 1:
         print('Sorting scheme 1')
-        sorting = ms5.sorting_scheme1(recording=recording_preprocessed, sorting_parameters=scheme1_sorting_parameters)
+        sorting = ms5.sorting_scheme1(recording=recording_binary, sorting_parameters=scheme1_sorting_parameters)
     elif scheme == 2:
         print('Sorting scheme 2')
-        sorting = ms5.sorting_scheme2(recording=recording_preprocessed, sorting_parameters=scheme2_sorting_parameters)
+        sorting = ms5.sorting_scheme2(recording=recording_binary, sorting_parameters=scheme2_sorting_parameters)
     elif scheme == 3:
         print('Sorting scheme 3')
-        sorting = ms5.sorting_scheme3(recording=recording_preprocessed, sorting_parameters=scheme3_sorting_parameters)
+        sorting = ms5.sorting_scheme3(recording=recording_binary, sorting_parameters=scheme3_sorting_parameters)
+    else:
+        raise Exception(f'Unexpected scheme: {scheme}')
+    print_elapsed_time()
+    
+    # open the remote file again because the signed download url may have expired
+    print('Opening remote input file')
+    remf = remfile.File(input.get_url())
+    f = h5py.File(remf, 'r')
+    print_elapsed_time()
 
     print('Writing output NWB file')
-    with pynwb.NWBHDF5IO(file=h5py.File(remf, 'r'), mode='r') as io:
+    with pynwb.NWBHDF5IO(file=f, mode='r', load_namespaces=True) as io:
         nwbfile_rec = io.read()
         
         if not os.path.exists('output'):
@@ -167,9 +187,11 @@ def mountainsort5(
         sorting_out_fname = 'output/sorting.nwb'
 
         create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
+    print_elapsed_time()
     
     print('Uploading output NWB file')
     output.set(sorting_out_fname)
+    print_elapsed_time()
 
 def _scale_recording_if_float_type(recording: si.BaseRecording) -> si.BaseRecording:
     """
@@ -178,12 +200,12 @@ def _scale_recording_if_float_type(recording: si.BaseRecording) -> si.BaseRecord
     is a workaround for this issue with whitening:
     https://github.com/SpikeInterface/spikeinterface/issues/2064
     """
-    if np.dtype(recording.dype).kind == 'f': # floating point
+    if np.dtype(recording.get_dtype()).kind == 'f': # floating point
         pass
-    elif np.dtype(recording.dype).kind in ['u', 'i']: # integer
+    elif np.dtype(recording.get_dtype()).kind in ['u', 'i']: # integer
         return recording
     else:
-        raise Exception(f'Unexpected recording dtype: {recording.dtype}')
+        raise Exception(f'Unexpected recording dtype: {recording.get_dtype()}')
 
     print('Scaling float recording')
 
@@ -218,72 +240,32 @@ def ms5_quicktest(
     electrical_series_path: str,
     test_duration_sec: float
 ):
-    print('Starting ms5_quicktest processor')
-    nwb_url = input.get_url()
-    print(f'Input NWB URL: {nwb_url}')
-
-    # open the remote file
-    print('Opening remote input file')
-    # Use a disk cache because we are going to be doing random access
-    disk_cache = remfile.DiskCache('/tmp/remfile_cache')
-    remf = remfile.File(nwb_url, disk_cache=disk_cache)
-    f = h5py.File(remf, 'r')
-
-    print('Creating input recording')
-    recording = NwbRecording(
-        file=f,
-        electrical_series_path=electrical_series_path
+    mountainsort5(
+        input=input,
+        output=output,
+        electrical_series_path=electrical_series_path,
+        scheme=2,
+        detect_threshold=5.5,
+        detect_sign=-1,
+        detect_time_radius_msec=0.5,
+        snippet_T1=20,
+        snippet_T2=20,
+        npca_per_channel=3,
+        npca_per_subdivision=10,
+        snippet_mask_radius=250,
+        scheme1_detect_channel_radius=150,
+        scheme2_phase1_detect_channel_radius=200,
+        scheme2_detect_channel_radius=50,
+        scheme2_max_num_snippets_per_training_batch=200,
+        scheme2_training_duration_sec=60 * 5,
+        scheme2_training_recording_sampling_mode='uniform',
+        scheme3_block_duration_sec=60 * 30,
+        freq_min=300,
+        freq_max=6000,
+        filter=True,
+        whiten=True,
+        test_duration_sec=test_duration_sec
     )
-
-    if test_duration_sec > 0:
-        recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
-
-    freq_min = 300
-    freq_max = 6000
-    detect_threshold = 5.5
-    detect_channel_radius = 150
-    detect_time_radius_msec = 0.5
-    detect_sign = -1
-    snippet_T1 = 20
-    snippet_T2 = 20
-    snippet_mask_radius = 250
-    npca_per_channel = 3
-    npca_per_subdivision = 10
-
-    # Make sure the recording is preprocessed appropriately
-    # lazy preprocessing
-    recording_filtered = spre.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
-    recording_scaled = _scale_recording_if_float_type(recording_filtered)
-    recording_preprocessed: si.BaseRecording = spre.whiten(recording_scaled, dtype='float32')
-
-    print('Setting up sorting parameters')
-    scheme1_sorting_parameters = ms5.Scheme1SortingParameters(
-        detect_threshold=detect_threshold,
-        detect_channel_radius=detect_channel_radius,
-        detect_time_radius_msec=detect_time_radius_msec,
-        detect_sign=detect_sign,
-        snippet_T1=snippet_T1,
-        snippet_T2=snippet_T2,
-        snippet_mask_radius=snippet_mask_radius,
-        npca_per_channel=npca_per_channel,
-        npca_per_subdivision=npca_per_subdivision
-    )
-
-    print('Sorting scheme 1')
-    sorting = ms5.sorting_scheme1(recording=recording_preprocessed, sorting_parameters=scheme1_sorting_parameters)
-
-    print('Writing output NWB file')
-    with pynwb.NWBHDF5IO(file=h5py.File(remf, 'r'), mode='r') as io:
-        nwbfile_rec = io.read()
-        
-        if not os.path.exists('output'):
-            os.mkdir('output')
-        sorting_out_fname = 'output/sorting.nwb'
-
-        create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
-    
-    print('Uploading output NWB file')
-    output.set(sorting_out_fname)
 
 app.add_processor(mountainsort5)
 app.add_processor(ms5_quicktest)

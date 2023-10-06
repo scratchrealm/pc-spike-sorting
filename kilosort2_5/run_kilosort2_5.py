@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 import spikeinterface as si
 import spikeinterface.sorters as ss
+import spikeinterface.extractors as se
 
-def run_kilosort3(
+def run_kilosort2_5(
     *,
     recording: si.BinaryRecordingExtractor,
     sorting_params: dict={}
@@ -28,7 +29,7 @@ def run_kilosort3(
     print(f'Using binary file path: {binary_file_path}')
     binary_file_path = Path(binary_file_path)
 
-    os.environ['HOME'] = '/tmp' # we set /tmp to be the home dir because ks3_compiled prepares matlab runtime stuff in the home dir, and that may not exist if this whole thing is running in singularity using the --contain flag
-    sorting = ss.run_sorter('kilosort3', recording, **sorting_params, verbose=True)
+    os.environ['HOME'] = '/tmp' # we set /tmp to be the home dir because ks2_5_compiled prepares matlab runtime stuff in the home dir, and that may not exist if this whole thing is running in singularity using the --contain flag
+    sorting = ss.run_sorter('kilosort2_5', recording, **sorting_params, verbose=True)
 
     return sorting

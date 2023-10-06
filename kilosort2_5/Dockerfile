@@ -1,4 +1,4 @@
-FROM python
+FROM spikeinterface/kilosort2_5-compiled-base
 
 RUN mkdir /src
 
@@ -7,9 +7,13 @@ RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && ec
     cd /src/protocaas/python && \
     pip install -e .
 
-# Install dandi
-RUN pip install dandi
+# Install pynwb
+RUN pip install pynwb
+
+# Install spikeinterface
+RUN pip install spikeinterface
 
 # Copy files into the container
 RUN mkdir /app
+COPY *.py /app/
 COPY main /app/main

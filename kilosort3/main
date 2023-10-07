@@ -82,7 +82,7 @@ def kilosort3(
 
     # open the remote file
     print('Opening remote input file')
-    remf = remfile.File(input.get_url())
+    remf = remfile.File(input) # input has a get_url() method which will auto-renew the signed download url if it has expired
     f = h5py.File(remf, 'r')
     print_elapsed_time()
 
@@ -134,12 +134,6 @@ def kilosort3(
         recording=recording_binary,
         sorting_params=sorting_params
     )
-    print_elapsed_time()
-
-    # open the remote file again because the signed download url may have expired
-    print('Opening remote input file')
-    remf = remfile.File(input.get_url())
-    f = h5py.File(remf, 'r')
     print_elapsed_time()
 
     print('Writing output NWB file')

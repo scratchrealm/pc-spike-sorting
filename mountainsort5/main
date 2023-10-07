@@ -80,10 +80,9 @@ def mountainsort5(
     print('Starting mountainsort5 processor')
     start_timer()
 
-    
     # open the remote file
     print('Opening remote input file')
-    remf = remfile.File(input.get_url())
+    remf = remfile.File(input) # input has a get_url() method which will auto-renew the signed download url if it has expired
     f = h5py.File(remf, 'r')
     print_elapsed_time()
 
@@ -170,12 +169,6 @@ def mountainsort5(
         sorting = ms5.sorting_scheme3(recording=recording_binary, sorting_parameters=scheme3_sorting_parameters)
     else:
         raise Exception(f'Unexpected scheme: {scheme}')
-    print_elapsed_time()
-    
-    # open the remote file again because the signed download url may have expired
-    print('Opening remote input file')
-    remf = remfile.File(input.get_url())
-    f = h5py.File(remf, 'r')
     print_elapsed_time()
 
     print('Writing output NWB file')

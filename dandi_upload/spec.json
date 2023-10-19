@@ -2,6 +2,7 @@
     "name": "dandi_upload",
     "help": "Upload files to DANDI",
     "image": "magland/pc-dandi-upload",
+    "executable": "/app/main",
     "processors": [
         {
             "name": "dandi_upload",

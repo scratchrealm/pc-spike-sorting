@@ -2,6 +2,7 @@
     "name": "mountainsort5",
     "help": "MountainSort5 spike sorting",
     "image": "magland/pc-mountainsort5",
+    "executable": "/app/main",
     "processors": [
         {
             "name": "mountainsort5",

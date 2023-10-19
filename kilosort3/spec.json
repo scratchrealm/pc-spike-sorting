@@ -2,6 +2,7 @@
     "name": "kilosort3",
     "help": "Kilosort3 spike sorting",
     "image": "magland/pc-kilosort3",
+    "executable": "/app/main",
     "processors": [
         {
             "name": "kilosort3",

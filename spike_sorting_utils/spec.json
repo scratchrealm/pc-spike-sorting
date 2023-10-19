@@ -2,6 +2,7 @@
     "name": "spike_sorting_utils",
     "help": "Utilities for working with spike sorting data",
     "image": "magland/pc-spike-sorting-utils",
+    "executable": "/app/main",
     "processors": [
         {
             "name": "spike_sorting_figurl",

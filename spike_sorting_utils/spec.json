@@ -1,0 +1,49 @@
+{
+    "name": "spike_sorting_utils",
+    "help": "Utilities for working with spike sorting data",
+    "image": "magland/pc-spike-sorting-utils",
+    "processors": [
+        {
+            "name": "spike_sorting_figurl",
+            "help": "\nCreate summary data for a spike sorting run.\n",
+            "inputs": [
+                {
+                    "name": "recording",
+                    "help": "recording .nwb file"
+                },
+                {
+                    "name": "sorting",
+                    "help": "sorting .nwb file"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "help": "output .figurl file"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "help": "Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries",
+                    "type": "str"
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                },
+                {
+                    "name": "label",
+                    "value": "Spike sorting figurl"
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                }
+            ]
+        }
+    ]
+}

@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 
-import os
-import numpy as np
-import h5py
 import protocaas.sdk as pr
-import spikeinterface as si
-import remfile
-import pynwb
-from NwbRecording import NwbRecording
-from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
-import spikeinterface.preprocessing as spre
-import mountainsort5 as ms5
-from make_float32_recording import make_float32_recording
-from print_elapsed_time import print_elapsed_time, start_timer
+
+try:
+    import os
+    import numpy as np
+    import h5py
+    import spikeinterface as si
+    import remfile
+    import pynwb
+    from NwbRecording import NwbRecording
+    from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
+    import spikeinterface.preprocessing as spre
+    import mountainsort5 as ms5
+    from make_float32_recording import make_float32_recording
+    from print_elapsed_time import print_elapsed_time, start_timer
+except ImportError:
+    # Do not raise import error if we are only generating the spec
+    if not pr.is_generating_spec:
+        raise
 
 
 app = pr.App('mountainsort5', help="MountainSort5 spike sorting")

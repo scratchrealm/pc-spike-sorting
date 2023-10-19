@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
-from typing import List
-import os
-import json
-import shutil
-import subprocess
-import requests
 import protocaas.sdk as pr
+
+try:
+    from typing import List
+    import os
+    import json
+    import shutil
+    import subprocess
+    import requests
+except ImportError:
+    # Do not raise import error if we are only generating the spec
+    if not pr.is_generating_spec:
+        raise
 
 
 app = pr.App('dandi_upload', help="Upload files to DANDI")

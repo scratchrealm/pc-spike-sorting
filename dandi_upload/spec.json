@@ -1,0 +1,63 @@
+{
+    "name": "dandi_upload",
+    "help": "Upload files to DANDI",
+    "image": "magland/pc-dandi-upload",
+    "processors": [
+        {
+            "name": "dandi_upload",
+            "help": "\nUpload files to a dandiset on DANDI.\n",
+            "inputs": [
+                {
+                    "name": "inputs",
+                    "help": "List of files to upload",
+                    "list": true
+                }
+            ],
+            "outputs": [],
+            "parameters": [
+                {
+                    "name": "dandiset_id",
+                    "help": "Dandiset ID",
+                    "type": "str"
+                },
+                {
+                    "name": "dandi_instance",
+                    "help": "dandi or dandi-staging",
+                    "type": "str",
+                    "default": "dandi"
+                },
+                {
+                    "name": "dandi_api_key",
+                    "help": "DANDI API key",
+                    "type": "str",
+                    "secret": true
+                },
+                {
+                    "name": "names",
+                    "help": "Destination names in the dandiset",
+                    "type": "List[str]"
+                },
+                {
+                    "name": "was_generated_by_jsons",
+                    "help": "The JSON strings containing the wasGeneratedBy metadata for each input file",
+                    "type": "List[str]"
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                },
+                {
+                    "name": "label",
+                    "value": "DANDI upload"
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "dandi"
+                }
+            ]
+        }
+    ]
+}

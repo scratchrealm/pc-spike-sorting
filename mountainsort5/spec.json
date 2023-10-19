@@ -1,0 +1,235 @@
+{
+    "name": "mountainsort5",
+    "help": "MountainSort5 spike sorting",
+    "image": "magland/pc-mountainsort5",
+    "processors": [
+        {
+            "name": "mountainsort5",
+            "help": "\nMountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.\nBy employing Isosplit, a non-parametric density-based clustering approach, the software minimizes the need for manual intervention, thereby reducing errors and inconsistencies.\nSee https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.1016/j.neuron.2017.08.030\n",
+            "inputs": [
+                {
+                    "name": "input",
+                    "help": "input .nwb file"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "help": "output .nwb file"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "help": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
+                    "type": "str"
+                },
+                {
+                    "name": "scheme",
+                    "help": "Which sorting scheme to use: 1, 2, or 3",
+                    "type": "int",
+                    "default": 2,
+                    "options": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                {
+                    "name": "detect_threshold",
+                    "help": "Detection threshold - recommend to use the default",
+                    "type": "float",
+                    "default": 5.5
+                },
+                {
+                    "name": "detect_sign",
+                    "help": "Use -1 for detecting negative peaks, 1 for positive, 0 for both",
+                    "type": "int",
+                    "default": -1,
+                    "options": [
+                        -1,
+                        0,
+                        1
+                    ]
+                },
+                {
+                    "name": "detect_time_radius_msec",
+                    "help": "Determines the minimum allowable time interval between detected spikes in the same spatial region",
+                    "type": "float",
+                    "default": 0.5
+                },
+                {
+                    "name": "snippet_T1",
+                    "help": "Number of samples before the peak to include in the snippet",
+                    "type": "int",
+                    "default": 20
+                },
+                {
+                    "name": "snippet_T2",
+                    "help": "Number of samples after the peak to include in the snippet",
+                    "type": "int",
+                    "default": 20
+                },
+                {
+                    "name": "npca_per_channel",
+                    "help": "Number of PCA features per channel in the initial dimension reduction step",
+                    "type": "int",
+                    "default": 3
+                },
+                {
+                    "name": "npca_per_subdivision",
+                    "help": "Number of PCA features to compute at each stage of clustering in the isosplit6 subdivision method",
+                    "type": "int",
+                    "default": 10
+                },
+                {
+                    "name": "snippet_mask_radius",
+                    "help": "Radius of the mask to apply to the extracted snippets",
+                    "type": "float",
+                    "default": 250
+                },
+                {
+                    "name": "scheme1_detect_channel_radius",
+                    "help": "Channel radius for excluding events that are too close in time in scheme 1",
+                    "type": "float",
+                    "default": 150
+                },
+                {
+                    "name": "scheme2_phase1_detect_channel_radius",
+                    "help": "Channel radius for excluding events that are too close in time during phase 1 of scheme 2",
+                    "type": "float",
+                    "default": 200
+                },
+                {
+                    "name": "scheme2_detect_channel_radius",
+                    "help": "Channel radius for excluding events that are too close in time during phase 2 of scheme 2",
+                    "type": "float",
+                    "default": 50
+                },
+                {
+                    "name": "scheme2_max_num_snippets_per_training_batch",
+                    "help": "Maximum number of snippets to use in each batch for training during phase 2 of scheme 2",
+                    "type": "int",
+                    "default": 200
+                },
+                {
+                    "name": "scheme2_training_duration_sec",
+                    "help": "Duration of training data to use in scheme 2",
+                    "type": "float",
+                    "default": 300
+                },
+                {
+                    "name": "scheme2_training_recording_sampling_mode",
+                    "help": "initial or uniform",
+                    "type": "str",
+                    "default": "uniform",
+                    "options": [
+                        "initial",
+                        "uniform"
+                    ]
+                },
+                {
+                    "name": "scheme3_block_duration_sec",
+                    "help": "Duration of each block in scheme 3",
+                    "type": "float",
+                    "default": 1800
+                },
+                {
+                    "name": "freq_min",
+                    "help": "High-pass filter cutoff frequency",
+                    "type": "float",
+                    "default": 300
+                },
+                {
+                    "name": "freq_max",
+                    "help": "Low-pass filter cutoff frequency",
+                    "type": "float",
+                    "default": 6000
+                },
+                {
+                    "name": "filter",
+                    "help": "Enable or disable filter",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "whiten",
+                    "help": "Enable or disable whiten",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "test_duration_sec",
+                    "help": "For testing purposes: duration of the recording in seconds (0 means all)",
+                    "type": "float",
+                    "default": 0
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                },
+                {
+                    "name": "label",
+                    "value": "MountainSort 5"
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorter"
+                }
+            ]
+        },
+        {
+            "name": "ms5_quicktest",
+            "help": "\nFor running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.\n",
+            "inputs": [
+                {
+                    "name": "input",
+                    "help": "input .nwb file"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "help": "output .nwb file"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "help": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
+                    "type": "str"
+                },
+                {
+                    "name": "test_duration_sec",
+                    "help": "For testing purposes: duration of the recording in seconds (0 means all)",
+                    "type": "float",
+                    "default": 60
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                },
+                {
+                    "name": "label",
+                    "value": "MountainSort5 Quick Test"
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorter"
+                }
+            ]
+        }
+    ]
+}

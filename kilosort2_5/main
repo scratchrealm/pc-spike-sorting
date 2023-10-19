@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
 
-from typing import List
-import os
-import h5py
 import protocaas.sdk as pr
-import remfile
-import pynwb
-from NwbRecording import NwbRecording
-from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
-from run_kilosort2_5 import run_kilosort2_5
-from make_int16_recording import make_int16_recording
-from print_elapsed_time import print_elapsed_time, start_timer
+
+try:
+    from typing import List
+    import os
+    import h5py
+    import remfile
+    import pynwb
+    from NwbRecording import NwbRecording
+    from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
+    from run_kilosort2_5 import run_kilosort2_5
+    from make_int16_recording import make_int16_recording
+    from print_elapsed_time import print_elapsed_time, start_timer
+except ImportError:
+    # Do not raise import error if we are only generating the spec
+    if not pr.is_generating_spec:
+        raise
 
 app = pr.App('kilosort2_5', help="Kilosort 2.5 spike sorting")
 

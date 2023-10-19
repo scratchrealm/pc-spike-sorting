@@ -1,0 +1,224 @@
+{
+    "name": "kilosort2_5",
+    "help": "Kilosort 2.5 spike sorting",
+    "image": "magland/pc-kilosort2_5",
+    "processors": [
+        {
+            "name": "kilosort2_5",
+            "help": "\nKilosort 2.5\n",
+            "inputs": [
+                {
+                    "name": "input",
+                    "help": "input .nwb file"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "help": "output .nwb file"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "help": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
+                    "type": "str"
+                },
+                {
+                    "name": "detect_threshold",
+                    "help": "Threshold for spike detection",
+                    "type": "float",
+                    "default": 6
+                },
+                {
+                    "name": "projection_threshold",
+                    "help": "Threshold on projections",
+                    "type": "List[float]",
+                    "default": [
+                        10,
+                        4
+                    ]
+                },
+                {
+                    "name": "preclust_threshold",
+                    "help": "Threshold crossings for pre-clustering (in PCA projection space)",
+                    "type": "float",
+                    "default": 8
+                },
+                {
+                    "name": "car",
+                    "help": "Enable or disable common reference",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "minFR",
+                    "help": "Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed",
+                    "type": "float",
+                    "default": 0.1
+                },
+                {
+                    "name": "minfr_goodchannels",
+                    "help": "Minimum firing rate on a 'good' channel",
+                    "type": "float",
+                    "default": 0.1
+                },
+                {
+                    "name": "nblocks",
+                    "help": "blocks for registration. 0 turns it off, 1 does rigid registration. Replaces 'datashift' option.",
+                    "type": "int",
+                    "default": 5
+                },
+                {
+                    "name": "sig",
+                    "help": "spatial smoothness constant for registration",
+                    "type": "float",
+                    "default": 20
+                },
+                {
+                    "name": "freq_min",
+                    "help": "High-pass filter cutoff frequency",
+                    "type": "float",
+                    "default": 150
+                },
+                {
+                    "name": "sigmaMask",
+                    "help": "Spatial constant in um for computing residual variance of spike",
+                    "type": "float",
+                    "default": 30
+                },
+                {
+                    "name": "nPCs",
+                    "help": "Number of PCA dimensions",
+                    "type": "int",
+                    "default": 3
+                },
+                {
+                    "name": "ntbuff",
+                    "help": "Samples of symmetrical buffer for whitening and spike detection",
+                    "type": "int",
+                    "default": 64
+                },
+                {
+                    "name": "nfilt_factor",
+                    "help": "Max number of clusters per good channel (even temporary ones) 4",
+                    "type": "int",
+                    "default": 4
+                },
+                {
+                    "name": "NT",
+                    "help": "Batch size (if -1 it is automatically computed)",
+                    "type": "int",
+                    "default": -1
+                },
+                {
+                    "name": "AUCsplit",
+                    "help": "Threshold on the area under the curve (AUC) criterion for performing a split in the final step",
+                    "type": "float",
+                    "default": 0.9
+                },
+                {
+                    "name": "do_correction",
+                    "help": "If True drift registration is applied",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "wave_length",
+                    "help": "size of the waveform extracted around each detected peak, (Default 61, maximum 81)",
+                    "type": "float",
+                    "default": 61
+                },
+                {
+                    "name": "keep_good_only",
+                    "help": "If True only 'good' units are returned",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "skip_kilosort_preprocessing",
+                    "help": "Can optionaly skip the internal kilosort preprocessing",
+                    "type": "bool",
+                    "default": false
+                },
+                {
+                    "name": "scaleproc",
+                    "help": "int16 scaling of whitened data, if -1 set to 200.",
+                    "type": "int",
+                    "default": -1
+                },
+                {
+                    "name": "test_duration_sec",
+                    "help": "For testing purposes: duration of the recording in seconds (0 means all)",
+                    "type": "float",
+                    "default": 0
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                },
+                {
+                    "name": "label",
+                    "value": "Kilosort 2.5"
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorter"
+                }
+            ]
+        },
+        {
+            "name": "ks2_5_quicktest",
+            "help": "\nFor running tests. Runs Kilosort 2.5 with default parameters on the first portion of the recording.\n",
+            "inputs": [
+                {
+                    "name": "input",
+                    "help": "input .nwb file"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "help": "output .nwb file"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "help": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
+                    "type": "str"
+                },
+                {
+                    "name": "test_duration_sec",
+                    "help": "For testing purposes: duration of the recording in seconds (0 means all)",
+                    "type": "float",
+                    "default": 60
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                },
+                {
+                    "name": "label",
+                    "value": "Kilosort 2.5 Quick Test"
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorter"
+                }
+            ]
+        }
+    ]
+}

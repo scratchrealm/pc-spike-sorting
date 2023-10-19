@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 
-from typing import List
-import os
-import h5py
 import protocaas.sdk as pr
-import remfile
-import spikeinterface.preprocessing as spre
-from NwbRecording import NwbRecording
-from NwbSorting import NwbSorting
-import sortingview.views as vv
-from helpers.compute_correlogram_data import compute_correlogram_data
+
+try:
+    from typing import List
+    import os
+    import h5py
+    import remfile
+    import spikeinterface.preprocessing as spre
+    from NwbRecording import NwbRecording
+    from NwbSorting import NwbSorting
+    import sortingview.views as vv
+    from helpers.compute_correlogram_data import compute_correlogram_data
+except ImportError:
+    # Do not raise import error if we are only generating the spec
+    if not pr.is_generating_spec:
+        raise
 
 
 app = pr.App('spike_sorting_utils', help="Utilities for working with spike sorting data")

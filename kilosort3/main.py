@@ -10,7 +10,7 @@ try:
     import pynwb
     from NwbRecording import NwbRecording
     from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
-    from run_kilosort2_5 import run_kilosort2_5
+    from run_kilosort3 import run_kilosort3
     from make_int16_recording import make_int16_recording
     from print_elapsed_time import print_elapsed_time, start_timer
 except ImportError:
@@ -18,41 +18,52 @@ except ImportError:
     if not pr.is_generating_spec:
         raise
 
-app = pr.App('kilosort2_5', help="Kilosort 2.5 spike sorting")
+
+app = pr.App(
+    'kilosort3',
+    help="Kilosort3 spike sorting",
+    app_container='magland/pc-kilosort3',
+    app_executable='/app/main'
+)
 
 description = """
-Kilosort 2.5
+Kilosort3 is a spike sorting software package developed by Marius Pachitariu at Janelia Research Campus.
+It uses a GPU-accelerated algorithm to detect, align, and cluster spikes across many channels.
+Building on previous versions, Kilosort3 offers improved efficiency and accuracy in the extraction of neural spike waveforms from multichannel electrophysiological recordings.
+By leveraging parallel processing capabilities of modern GPUs, it enables sorting with minimal manual intervention.
+This tool has become an essential part of the workflow many electrophysiology labs.
+For more information see https://github.com/MouseLand/Kilosort
 """
 
-@pr.processor('kilosort2_5', help=description)
+@pr.processor('kilosort3', help=description)
 @pr.attribute('wip', True)
-@pr.attribute('label', 'Kilosort 2.5')
+@pr.attribute('label', 'Kilosort 3')
 @pr.tags(['spike_sorting', 'spike_sorter'])
 @pr.input('input', help='input .nwb file')
 @pr.output('output', help='output .nwb file')
 @pr.parameter('electrical_series_path', type=str, help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-@pr.parameter('detect_threshold', type=float, default=6, help="Threshold for spike detection")
-@pr.parameter('projection_threshold', type=List[float], default=[10, 4], help="Threshold on projections")
-@pr.parameter('preclust_threshold', type=float, default=8, help="Threshold crossings for pre-clustering (in PCA projection space)")
-@pr.parameter('car', type=bool, default=True, help="Enable or disable common reference")
-@pr.parameter('minFR', type=float, default=0.1, help="Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed")
-@pr.parameter('minfr_goodchannels', type=float, default=0.1, help="Minimum firing rate on a 'good' channel")
-@pr.parameter('nblocks', type=int, default=5, help="blocks for registration. 0 turns it off, 1 does rigid registration. Replaces 'datashift' option.")
-@pr.parameter('sig', type=float, default=20, help="spatial smoothness constant for registration")
-@pr.parameter('freq_min', type=float, default=150, help="High-pass filter cutoff frequency")
-@pr.parameter('sigmaMask', type=float, default=30, help="Spatial constant in um for computing residual variance of spike")
-@pr.parameter('nPCs', type=int, default=3, help="Number of PCA dimensions")
-@pr.parameter('ntbuff', type=int, default=64, help="Samples of symmetrical buffer for whitening and spike detection")
-@pr.parameter('nfilt_factor', type=int, default=4, help="Max number of clusters per good channel (even temporary ones) 4")
+@pr.parameter('detect_threshold', type=float, default=6, help='Threshold for spike detection')
+@pr.parameter('projection_threshold', type=List[float], default=[9, 9], help='Threshold on projections')
+@pr.parameter('preclust_threshold', type=float, default=8, help='Threshold crossings for pre-clustering (in PCA projection space)')
+@pr.parameter('car', type=bool, default=True, help='Enable or disable common reference')
+@pr.parameter('minFR', type=float, default=0.2, help='Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed')
+@pr.parameter('minfr_goodchannels', type=float, default=0.2, help='Minimum firing rate on a "good" channel')
+@pr.parameter('nblocks', type=int, default=5, help='blocks for registration. 0 turns it off, 1 does rigid registration. Replaces "datashift" option.')
+@pr.parameter('sig', type=float, default=20, help='spatial smoothness constant for registration')
+@pr.parameter('freq_min', type=float, default=300, help='High-pass filter cutoff frequency')
+@pr.parameter('sigmaMask', type=float, default=30, help='Spatial constant in um for computing residual variance of spike')
+@pr.parameter('nPCs', type=int, default=3, help='Number of PCA dimensions')
+@pr.parameter('ntbuff', type=int, default=64, help='Samples of symmetrical buffer for whitening and spike detection')
+@pr.parameter('nfilt_factor', type=int, default=4, help='Max number of clusters per good channel (even temporary ones) 4')
+@pr.parameter('do_correction', type=bool, default=True, help='If True drift registration is applied')
 @pr.parameter('NT', type=int, default=-1, help='Batch size (if -1 it is automatically computed)')
-@pr.parameter('AUCsplit', type=float, default=0.9, help="Threshold on the area under the curve (AUC) criterion for performing a split in the final step")
-@pr.parameter('do_correction', type=bool, default=True, help="If True drift registration is applied")
-@pr.parameter('wave_length', type=float, default=61, help="size of the waveform extracted around each detected peak, (Default 61, maximum 81)")
-@pr.parameter('keep_good_only', type=bool, default=True, help="If True only 'good' units are returned")
-@pr.parameter('skip_kilosort_preprocessing', type=bool, default=False, help="Can optionaly skip the internal kilosort preprocessing")
-@pr.parameter('scaleproc', type=int, default=-1, help="int16 scaling of whitened data, if -1 set to 200.")
+@pr.parameter('AUCsplit', type=float, default=0.8, help='Threshold on the area under the curve (AUC) criterion for performing a split in the final step')
+@pr.parameter('wave_length', type=int, default=61, help='size of the waveform extracted around each detected peak, (Default 61, maximum 81)')
+@pr.parameter('keep_good_only', type=bool, default=True, help='If True only "good" units are returned')
+@pr.parameter('skip_kilosort_preprocessing', type=bool, default=False, help='Can optionaly skip the internal kilosort preprocessing')
+@pr.parameter('scaleproc', type=int, default=-1, help='int16 scaling of whitened data, if -1 set to 200.')
 @pr.parameter('test_duration_sec', type=float, default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
-def kilosort2_5(
+def kilosort3(
     input: pr.InputFile,
     output: pr.OutputFile,
     electrical_series_path: str,
@@ -63,22 +74,22 @@ def kilosort2_5(
     minFR: float,
     minfr_goodchannels: float,
     nblocks: int,
-    sig: float,
-    freq_min: float,
-    sigmaMask: float,
+    sig: int,
+    freq_min: int,
+    sigmaMask: int,
     nPCs: int,
     ntbuff: int,
     nfilt_factor: int,
     do_correction: bool,
     NT: int,
     AUCsplit: float,
-    wave_length: float,
+    wave_length: int,
     keep_good_only: bool,
     skip_kilosort_preprocessing: bool,
     scaleproc: int,
     test_duration_sec: float
 ):
-    print('Starting kilosort2_5 processor')
+    print('Starting kilosort3 processor')
     start_timer()
 
     # open the remote file
@@ -104,8 +115,8 @@ def kilosort2_5(
     recording_binary = make_int16_recording(recording, dirname='/tmp/int16_recording')
     print_elapsed_time()
 
-    # run kilosort2_5
-    print('Preparing kilosort2_5')
+    # run kilosort3
+    print('Preparing kilosort3')
     sorting_params = {
         'detect_threshold': detect_threshold,
         'projection_threshold': projection_threshold,
@@ -126,12 +137,12 @@ def kilosort2_5(
         'wave_length': wave_length,
         'keep_good_only': keep_good_only,
         'skip_kilosort_preprocessing': skip_kilosort_preprocessing,
-        'scaleproc': scaleproc
+        'scaleproc': scaleproc if scaleproc >= 0 else None
     }
 
-    print('Running kilosort2_5')
+    print('Running kilosort3')
     os.mkdir('working')
-    sorting = run_kilosort2_5(
+    sorting = run_kilosort3(
         recording=recording_binary,
         sorting_params=sorting_params
     )
@@ -153,43 +164,43 @@ def kilosort2_5(
     print_elapsed_time()
 
 description_quicktest = """
-For running tests. Runs Kilosort 2.5 with default parameters on the first portion of the recording.
+For running tests. Runs Kilosort 3 with default parameters on the first portion of the recording.
 """
 
-@pr.processor('ks2_5_quicktest', help=description_quicktest)
+@pr.processor('ks3_quicktest', help=description_quicktest)
 @pr.attribute('wip', True)
-@pr.attribute('label', 'Kilosort 2.5 Quick Test')
+@pr.attribute('label', 'Kilosort 3 Quick Test')
 @pr.tags(['spike_sorting', 'spike_sorter'])
 @pr.input('input', help='input .nwb file')
 @pr.output('output', help='output .nwb file')
 @pr.parameter('electrical_series_path', type=str, help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
 @pr.parameter('test_duration_sec', type=float, default=60, help='For testing purposes: duration of the recording in seconds (0 means all)')
-def ks2_5_quicktest(
+def ks3_quicktest(
     input: pr.InputFile,
     output: pr.OutputFile,
     electrical_series_path: str,
     test_duration_sec: float
 ):
-    kilosort2_5(
+    kilosort3(
         input=input,
         output=output,
         electrical_series_path=electrical_series_path,
         detect_threshold=6,
-        projection_threshold=[10, 4],
+        projection_threshold=[9, 9],
         preclust_threshold=8,
         car=True,
-        minFR=0.1,
-        minfr_goodchannels=0.1,
+        minFR=0.2,
+        minfr_goodchannels=0.2,
         nblocks=5,
         sig=20,
-        freq_min=150,
+        freq_min=300,
         sigmaMask=30,
         nPCs=3,
         ntbuff=64,
         nfilt_factor=4,
-        NT=-1,
-        AUCsplit=0.9,
         do_correction=True,
+        NT=-1,
+        AUCsplit=0.8,
         wave_length=61,
         keep_good_only=True,
         skip_kilosort_preprocessing=False,
@@ -197,8 +208,8 @@ def ks2_5_quicktest(
         test_duration_sec=test_duration_sec
     )
 
-app.add_processor(kilosort2_5)
-app.add_processor(ks2_5_quicktest)
+app.add_processor(kilosort3)
+app.add_processor(ks3_quicktest)
 
 if __name__ == '__main__':
     app.run()

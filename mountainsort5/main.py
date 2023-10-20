@@ -21,7 +21,12 @@ except ImportError:
         raise
 
 
-app = pr.App('mountainsort5', help="MountainSort5 spike sorting")
+app = pr.App(
+    'mountainsort5',
+    help="MountainSort5 spike sorting",
+    app_container='magland/pc-mountainsort5',
+    app_executable='/app/main'
+)
 
 description = """
 MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.

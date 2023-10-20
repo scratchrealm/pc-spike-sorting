@@ -18,7 +18,12 @@ except ImportError:
         raise
 
 
-app = pr.App('spike_sorting_utils', help="Utilities for working with spike sorting data")
+app = pr.App(
+    'spike_sorting_utils',
+    help="Utilities for working with spike sorting data",
+    app_container='magland/pc-spike-sorting-utils',
+    app_executable='/app/main'
+)
 
 description = """
 Create summary data for a spike sorting run.

@@ -15,7 +15,12 @@ except ImportError:
         raise
 
 
-app = pr.App('dandi_upload', help="Upload files to DANDI")
+app = pr.App(
+    'dandi_upload',
+    help="Upload files to DANDI",
+    app_image='magland/pc-dandi-upload',
+    app_executable='/app/main'
+)
 
 description = """
 Upload files to a dandiset on DANDI.

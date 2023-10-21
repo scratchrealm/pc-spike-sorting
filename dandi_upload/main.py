@@ -1,18 +1,11 @@
 #!/usr/bin/env python3
 
 import os
+from typing import List
+import json
+import shutil
+import subprocess
 import protocaas.sdk as pr
-
-try:
-    from typing import List
-    import json
-    import shutil
-    import subprocess
-    import requests
-except ImportError:
-    # Do not raise import error if we are only generating the spec
-    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
-        raise
 
 
 app = pr.App(
@@ -65,6 +58,7 @@ def dandi_upload(
         raise Exception(f'Unexpected dandi_instance: {dandi_instance}')
     
     dandiset_version = 'draft' # always going to be draft for uploading
+    workdir = dandiset_id
 
     try:
         cmd = f'dandi download --dandi-instance {dandi_instance} --download dandiset.yaml {dandi_archive_url}/dandiset/{dandiset_id}/{dandiset_version}'
@@ -73,8 +67,6 @@ def dandi_upload(
         result = subprocess.run(cmd, shell=True, env=env)
         if result.returncode != 0:
             raise Exception(f'Error running dandi download: {result.stderr}')
-
-        workdir = dandiset_id
 
         for ii, inp in enumerate(inputs):
             name = names[ii]
@@ -119,6 +111,7 @@ def _set_was_generated_by(
     dandiset_version: str,
     dandi_api_key: str
 ):
+    import requests
     headers = {
         'Authorization': f'token {dandi_api_key}'
     }

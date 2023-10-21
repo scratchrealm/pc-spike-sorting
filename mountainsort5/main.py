@@ -1,24 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+import numpy as np
 import protocaas.sdk as pr
-
-try:
-    import numpy as np
-    import h5py
-    import spikeinterface as si
-    import remfile
-    import pynwb
-    from NwbRecording import NwbRecording
-    from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
-    import spikeinterface.preprocessing as spre
-    import mountainsort5 as ms5
-    from make_float32_recording import make_float32_recording
-    from print_elapsed_time import print_elapsed_time, start_timer
-except ImportError:
-    # Do not raise import error if we are only generating the spec
-    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
-        raise
 
 
 app = pr.App(
@@ -88,6 +72,18 @@ def mountainsort5(
     whiten: bool,
     test_duration_sec: float
 ):
+    import h5py
+    import spikeinterface as si
+    import remfile
+    import pynwb
+    from NwbRecording import NwbRecording
+    from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
+    import spikeinterface.preprocessing as spre
+    import mountainsort5 as ms5
+    from make_float32_recording import make_float32_recording
+    from print_elapsed_time import print_elapsed_time, start_timer
+    from _scale_recording_if_float_type import _scale_recording_if_float_type
+
     print('Starting mountainsort5 processor')
     start_timer()
 
@@ -162,7 +158,7 @@ def mountainsort5(
         max_num_snippets_per_training_batch=scheme2_max_num_snippets_per_training_batch,
         classifier_npca=None,
         training_duration_sec=scheme2_training_duration_sec,
-        training_recording_sampling_mode=scheme2_training_recording_sampling_mode
+        training_recording_sampling_mode=scheme2_training_recording_sampling_mode # type: ignore
     )
 
     scheme3_sorting_parameters = ms5.Scheme3SortingParameters(
@@ -197,34 +193,7 @@ def mountainsort5(
     output.set(sorting_out_fname)
     print_elapsed_time()
 
-def _scale_recording_if_float_type(recording: si.BaseRecording) -> si.BaseRecording:
-    """
-    The purpose of this function is to scale a float recording into a reasonable range
-    so that whitening will work properly. The exact scaling factor doesn't matter. This
-    is a workaround for this issue with whitening:
-    https://github.com/SpikeInterface/spikeinterface/issues/2064
-    """
-    if np.dtype(recording.get_dtype()).kind == 'f': # floating point
-        pass
-    elif np.dtype(recording.get_dtype()).kind in ['u', 'i']: # integer
-        return recording
-    else:
-        raise Exception(f'Unexpected recording dtype: {recording.get_dtype()}')
 
-    print('Scaling float recording')
-
-    # get the first 1000 samples
-    traces0 = recording.get_traces(segment_index=0, start_frame=0, end_frame=1000)
-
-    # get the median absolute value
-    med_abs_val = np.median(np.abs(traces0))
-    if not med_abs_val:
-        raise Exception('Median absolute value is zero')
-
-    # scale the recording so that the median absolute value is 1
-    recording_scaled = spre.scale(recording, gain=1 / med_abs_val)
-
-    return recording_scaled
 
 description_quicktest = """
 For running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.

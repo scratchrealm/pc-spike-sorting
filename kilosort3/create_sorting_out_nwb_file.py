@@ -31,5 +31,5 @@ def create_sorting_out_nwb_file(*, nwbfile_rec, sorting, sorting_out_fname):
         )
 
     # Write the nwb file
-    with pynwb.NWBHDF5IO(sorting_out_fname, 'w') as io:
-        io.write(nwbfile, cache_spec=True)
+    with pynwb.NWBHDF5IO(sorting_out_fname, 'w') as io: # type: ignore
+        io.write(nwbfile, cache_spec=True) # type: ignore

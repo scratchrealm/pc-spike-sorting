@@ -31,5 +31,7 @@ def run_kilosort2_5(
 
     os.environ['HOME'] = '/tmp' # we set /tmp to be the home dir because ks2_5_compiled prepares matlab runtime stuff in the home dir, and that may not exist if this whole thing is running in singularity using the --contain flag
     sorting = ss.run_sorter('kilosort2_5', recording, **sorting_params, verbose=True)
+    if not sorting:
+        raise Exception('Sorting failed')
 
-    return sorting
+    return sorting # type: ignore

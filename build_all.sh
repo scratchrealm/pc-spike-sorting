@@ -6,7 +6,6 @@ cd dandi_upload
 docker build . -t magland/pc-dandi-upload
 docker push magland/pc-dandi-upload
 protocaas make-app-spec-file --app-dir . --spec-output-file spec.json
-./generate_spec.sh
 cd ..
 
 cd kilosort2_5

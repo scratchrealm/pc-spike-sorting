@@ -22,7 +22,7 @@ except ImportError:
 app = pr.App(
     'kilosort3', 
     help="Kilosort3 spike sorting",
-    pp_image="magland/pc-kilosort3",
+    app_image="magland/pc-kilosort3",
     app_executable="/app/main.py"
 )
 

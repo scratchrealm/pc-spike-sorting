@@ -3,15 +3,15 @@ import h5py
 import spikeinterface as si
 
 
-def NwbSorting(file: h5py.File) -> None:
+def NwbSorting(file: h5py.File):
     # Load unit IDs
-    ids = file['units']['id'][:]
+    ids: np.ndarray = file['units']['id'][:] # type: ignore
 
     # Load spike times index
-    spike_times_index = file['units']['spike_times_index'][:]
+    spike_times_index: np.ndarray = file['units']['spike_times_index'][:] # type: ignore
 
     # Load spike times
-    spike_times = file['units']['spike_times'][:]
+    spike_times: np.ndarray = file['units']['spike_times'][:] # type: ignore
 
     start_time_sec = np.min(spike_times)
     end_time_sec = np.max(spike_times)
@@ -26,6 +26,7 @@ def NwbSorting(file: h5py.File) -> None:
             s = spike_times[spike_times_index[i - 1]:spike_times_index[i]]
         units_dict[ids[i]] = (s * sampling_frequency).astype(np.int32)
     sorting = si.NumpySorting.from_dict(
-        [units_dict], sampling_frequency=sampling_frequency
+        [units_dict],
+        sampling_frequency=sampling_frequency # type: ignore (not sure why we need to ignore this)
     )
     return sorting

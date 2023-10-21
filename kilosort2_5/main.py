@@ -1,22 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+from typing import List
 import protocaas.sdk as pr
-
-try:
-    from typing import List
-    import h5py
-    import remfile
-    import pynwb
-    from NwbRecording import NwbRecording
-    from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
-    from run_kilosort2_5 import run_kilosort2_5
-    from make_int16_recording import make_int16_recording
-    from print_elapsed_time import print_elapsed_time, start_timer
-except ImportError:
-    # Do not raise import error if we are only generating the spec
-    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
-        raise
 
 
 app = pr.App(
@@ -84,6 +70,15 @@ def kilosort2_5(
     scaleproc: int,
     test_duration_sec: float
 ):
+    import h5py
+    import remfile
+    import pynwb
+    from NwbRecording import NwbRecording
+    from create_sorting_out_nwb_file import create_sorting_out_nwb_file 
+    from run_kilosort2_5 import run_kilosort2_5
+    from make_int16_recording import make_int16_recording
+    from print_elapsed_time import print_elapsed_time, start_timer
+
     print('Starting kilosort2_5 processor')
     start_timer()
 

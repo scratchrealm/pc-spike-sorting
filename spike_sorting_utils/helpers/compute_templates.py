@@ -21,7 +21,7 @@ def compute_templates(*, traces: npt.NDArray[np.float32], sorting: si.BaseSortin
             timer = time.time()
             print(f'Computing template for unit {i + 1} of {K}')
         unit_id = unit_ids[i]
-        times1 = sorting.get_unit_spike_train(unit_id, segment_index=0)
+        times1: np.ndarray = sorting.get_unit_spike_train(unit_id, segment_index=0)
         snippets1 = extract_snippets(traces, times=times1, T1=T1, T2=T2)
         templates[i] = np.median(snippets1, axis=0)
     return templates

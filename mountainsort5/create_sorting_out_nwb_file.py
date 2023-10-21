@@ -2,7 +2,7 @@ import pynwb
 from uuid import uuid4
 
 
-def create_sorting_out_nwb_file(*, nwbfile_rec, sorting, sorting_out_fname):
+def create_sorting_out_nwb_file(*, nwbfile_rec, sorting, sorting_out_fname: str):
     nwbfile = pynwb.NWBFile(
         session_description=nwbfile_rec.session_description,
         identifier=str(uuid4()),
@@ -31,5 +31,5 @@ def create_sorting_out_nwb_file(*, nwbfile_rec, sorting, sorting_out_fname):
         )
 
     # Write the nwb file
-    with pynwb.NWBHDF5IO(sorting_out_fname, 'w') as io:
-        io.write(nwbfile, cache_spec=True)
+    with pynwb.NWBHDF5IO(sorting_out_fname, 'w') as io: # type: ignore
+        io.write(nwbfile, cache_spec=True) # type: ignore

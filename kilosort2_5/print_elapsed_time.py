@@ -1,7 +1,8 @@
 import time
+from typing import Union, Dict
 
 
-_global = {
+_global: Dict[str, Union[float, None]] = {
     'start_time': None
 }
 

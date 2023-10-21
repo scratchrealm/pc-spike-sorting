@@ -51,7 +51,7 @@ def _make_binary_recording(recording: si.BaseRecording) -> si.BinaryRecordingExt
     ret.set_channel_locations(recording.get_channel_locations())
     return ret
 
-def _determine_optimal_scale_factor_for_int16(*, max_abs_val, median_abs_val):
+def _determine_optimal_scale_factor_for_int16(*, max_abs_val, median_abs_val) -> float:
     """
     Determine the optimal scale factor for int16 data.
     """

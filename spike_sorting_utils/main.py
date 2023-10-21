@@ -1,21 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+from typing import List
 import protocaas.sdk as pr
-
-try:
-    from typing import List
-    import h5py
-    import remfile
-    import spikeinterface.preprocessing as spre
-    from NwbRecording import NwbRecording
-    from NwbSorting import NwbSorting
-    import sortingview.views as vv
-    from helpers.compute_correlogram_data import compute_correlogram_data
-except ImportError:
-    # Do not raise import error if we are only generating the spec
-    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
-        raise
 
 
 app = pr.App(
@@ -43,6 +30,14 @@ def spike_sorting_figurl(
     output: pr.OutputFile,
     electrical_series_path: str
 ):
+    import h5py
+    import remfile
+    import spikeinterface.preprocessing as spre
+    from NwbRecording import NwbRecording
+    from NwbSorting import NwbSorting
+    import sortingview.views as vv
+    from helpers.compute_correlogram_data import compute_correlogram_data
+
     print('Starting spike_sorting_figurl')
     recording_nwb_url = recording.get_url()
     sorting_nwb_url = sorting.get_url()
@@ -57,7 +52,7 @@ def spike_sorting_figurl(
     recording_f = h5py.File(recording_remf, 'r')
 
     print('Creating input recording')
-    recording = NwbRecording(
+    nwb_recording = NwbRecording(
         file=recording_f,
         electrical_series_path=electrical_series_path
     )
@@ -65,16 +60,16 @@ def spike_sorting_figurl(
     print('Opening remote input sorting file')
     sorting_remf = remfile.File(sorting_nwb_url, disk_cache=disk_cache)
     sorting_f = h5py.File(sorting_remf, 'r')
-    sorting = NwbSorting(file=sorting_f)
+    nwb_sorting = NwbSorting(file=sorting_f)
 
     freq_min = 300
     freq_max = 6000
-    recording_filtered = spre.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
+    recording_filtered = spre.bandpass_filter(nwb_recording, freq_min=freq_min, freq_max=freq_max)
 
     print('Computing autocorrelograms')
     autocorrelogram_items: List[vv.AutocorrelogramItem] = []
-    for unit_id in sorting.get_unit_ids():
-        a = compute_correlogram_data(sorting=sorting, unit_id1=unit_id, unit_id2=None, window_size_msec=50, bin_size_msec=1)
+    for unit_id in nwb_sorting.get_unit_ids():
+        a = compute_correlogram_data(sorting=nwb_sorting, unit_id1=unit_id, unit_id2=None, window_size_msec=50, bin_size_msec=1)
         bin_edges_sec = a['bin_edges_sec']
         bin_counts = a['bin_counts']
         autocorrelogram_items.append(

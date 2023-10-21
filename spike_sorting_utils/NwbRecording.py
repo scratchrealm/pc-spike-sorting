@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Union, List
 import numpy as np
 import h5py
@@ -9,7 +11,7 @@ class NwbRecording(si.BaseRecording):
         file: h5py.File,
         electrical_series_path: str
     ) -> None:
-        electrical_series = file[electrical_series_path]
+        electrical_series: h5py.Group = file[electrical_series_path]
         electrical_series_data = electrical_series['data']
         dtype = electrical_series_data.dtype
 

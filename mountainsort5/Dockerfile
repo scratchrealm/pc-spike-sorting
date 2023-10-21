@@ -16,4 +16,4 @@ RUN pip install mountainsort5==0.3.3
 # Copy files into the container
 RUN mkdir /app
 COPY *.py /app/
-COPY main /app/main
+COPY main.py /app/main.py

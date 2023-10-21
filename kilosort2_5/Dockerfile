@@ -16,4 +16,4 @@ RUN pip install spikeinterface
 # Copy files into the container
 RUN mkdir /app
 COPY *.py /app/
-COPY main /app/main
+COPY main.py /app/main.py

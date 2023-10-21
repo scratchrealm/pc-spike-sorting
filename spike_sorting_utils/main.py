@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
+import os
 import protocaas.sdk as pr
 
 try:
     from typing import List
-    import os
     import h5py
     import remfile
     import spikeinterface.preprocessing as spre
@@ -14,15 +14,15 @@ try:
     from helpers.compute_correlogram_data import compute_correlogram_data
 except ImportError:
     # Do not raise import error if we are only generating the spec
-    if not pr.is_generating_spec:
+    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
         raise
 
 
 app = pr.App(
-    'spike_sorting_utils',
+    'spike_sorting_utils', 
     help="Utilities for working with spike sorting data",
-    app_container='magland/pc-spike-sorting-utils',
-    app_executable='/app/main'
+    app_image="magland/pc-spike-sorting-utils",
+    app_executable="/app/main.py"
 )
 
 description = """

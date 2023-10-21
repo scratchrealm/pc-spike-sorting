@@ -20,4 +20,4 @@ RUN pip install sortingview
 RUN mkdir /app
 COPY helpers /app/helpers
 COPY *.py /app/
-COPY main /app/main
+COPY main.py /app/main.py

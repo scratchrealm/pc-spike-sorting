@@ -12,4 +12,4 @@ RUN pip install dandi
 
 # Copy files into the container
 RUN mkdir /app
-COPY main /app/main
+COPY main.py /app/main

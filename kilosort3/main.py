@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
+import os
 import protocaas.sdk as pr
 
 try:
     from typing import List
-    import os
     import h5py
     import remfile
     import pynwb
@@ -15,15 +15,15 @@ try:
     from print_elapsed_time import print_elapsed_time, start_timer
 except ImportError:
     # Do not raise import error if we are only generating the spec
-    if not pr.is_generating_spec:
+    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
         raise
 
 
 app = pr.App(
-    'kilosort3',
+    'kilosort3', 
     help="Kilosort3 spike sorting",
-    app_container='magland/pc-kilosort3',
-    app_executable='/app/main'
+    app_image="magland/pc-kilosort3",
+    app_executable="/app/main.py"
 )
 
 description = """

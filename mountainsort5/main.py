@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
+import os
 import protocaas.sdk as pr
 
 try:
-    import os
     import numpy as np
     import h5py
     import spikeinterface as si
@@ -17,15 +17,15 @@ try:
     from print_elapsed_time import print_elapsed_time, start_timer
 except ImportError:
     # Do not raise import error if we are only generating the spec
-    if not pr.is_generating_spec:
+    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
         raise
 
 
 app = pr.App(
-    'mountainsort5',
+    'mountainsort5', 
     help="MountainSort5 spike sorting",
-    app_container='magland/pc-mountainsort5',
-    app_executable='/app/main'
+    app_image="magland/pc-mountainsort5",
+    app_executable="/app/main.py"
 )
 
 description = """

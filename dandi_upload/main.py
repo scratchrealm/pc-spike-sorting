@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 
+import os
 import protocaas.sdk as pr
 
 try:
     from typing import List
-    import os
     import json
     import shutil
     import subprocess
     import requests
 except ImportError:
     # Do not raise import error if we are only generating the spec
-    if not pr.is_generating_spec:
+    if os.environ.get('PROTOCAAS_GENERATE_SPEC', None) != '1':
         raise
 
 
 app = pr.App(
-    'dandi_upload',
+    'dandi_upload', 
     help="Upload files to DANDI",
-    app_image='magland/pc-dandi-upload',
-    app_executable='/app/main'
+    app_image="magland/pc-dandi-upload",
+    app_executable="/app/main.py"
 )
 
 description = """

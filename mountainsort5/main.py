@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-import numpy as np
+from dataclasses import dataclass
 import protocaas.sdk as pr
+
+# This would be imported from protocaas.sdk
+from protocaas_sdk_proposed_imports import parameter, parameter_group
 
 
 app = pr.App(
@@ -11,6 +14,39 @@ app = pr.App(
     app_image="magland/pc-mountainsort5",
     app_executable="/app/main.py"
 )
+
+@dataclass
+class Mountainsort5PreprocessingParameters:
+    freq_min: int = parameter(default=300, help='High-pass filter cutoff frequency')
+    freq_max: int = parameter(default=6000, help='Low-pass filter cutoff frequency')
+    filter: bool = parameter(default=True, help='Enable or disable filter')
+    whiten: bool = parameter(default=True, help='Enable or disable whiten')
+
+@dataclass
+class Mountainsort5Scheme2SortingParameters:
+    scheme2_phase1_detect_channel_radius: int = parameter(default=200, help='Channel radius for excluding events that are too close in time during phase 1 of scheme 2')
+    scheme2_detect_channel_radius: int = parameter(default=50, help='Channel radius for excluding events that are too close in time during phase 2 of scheme 2')
+    scheme2_max_num_snippets_per_training_batch: int = parameter(default=200, help='Maximum number of snippets to use in each batch for training during phase 2 of scheme 2')
+    scheme2_training_duration_sec: int = parameter(default=60 * 5, help='Duration of training data to use in scheme 2')
+    scheme2_training_recording_sampling_mode: str = parameter(default='uniform', help='initial or uniform', options=['initial', 'uniform'])
+
+@dataclass
+class Mountainsort5Parameters:
+    electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
+    scheme: int = parameter(default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
+    detect_threshold: float = parameter(default=5.5, help='Detection threshold - recommend to use the default')
+    detect_sign: int = parameter(default=-1, help='Use -1 for detecting negative peaks, 1 for positive, 0 for both', options=[-1, 0, 1])
+    detect_time_radius_msec: float = parameter(default=0.5, help='Determines the minimum allowable time interval between detected spikes in the same spatial region')
+    snippet_T1: int = parameter(default=20, help='Number of samples before the peak to include in the snippet')
+    snippet_T2: int = parameter(default=20, help='Number of samples after the peak to include in the snippet')
+    npca_per_channel: int = parameter(default=3, help='Number of PCA features per channel in the initial dimension reduction step')
+    npca_per_subdivision: int = parameter(default=10, help='Number of PCA features to compute at each stage of clustering in the isosplit6 subdivision method')
+    snippet_mask_radius: int = parameter(default=250, help='Radius of the mask to apply to the extracted snippets')
+    scheme1_detect_channel_radius: int = parameter(default=150, help='Channel radius for excluding events that are too close in time in scheme 1')
+    scheme2: Mountainsort5Scheme2SortingParameters = parameter_group(help='Parameters for scheme 2') # indicate somehow that this is active only if scheme == 2 or 3
+    scheme3_block_duration_sec: int = parameter(default=60 * 30, help='Duration of each block in scheme 3') # indicate somehow that this is active only if scheme == 3
+    preprocessing: Mountainsort5PreprocessingParameters = parameter_group(help='Preprocessing parameters')
+    test_duration_sec: float = parameter(default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
 
 description = """
 MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.
@@ -24,53 +60,11 @@ See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.10
 @pr.tags(['spike_sorting', 'spike_sorter'])
 @pr.input('input', help='input .nwb file')
 @pr.output('output', help='output .nwb file')
-@pr.parameter('electrical_series_path', type=str, help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-@pr.parameter('scheme', type=int, default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
-@pr.parameter('detect_threshold', type=float, default=5.5, help='Detection threshold - recommend to use the default')
-@pr.parameter('detect_sign', type=int, default=-1, help='Use -1 for detecting negative peaks, 1 for positive, 0 for both', options=[-1, 0, 1])
-@pr.parameter('detect_time_radius_msec', type=float, default=0.5, help='Determines the minimum allowable time interval between detected spikes in the same spatial region')
-@pr.parameter('snippet_T1', type=int, default=20, help='Number of samples before the peak to include in the snippet')
-@pr.parameter('snippet_T2', type=int, default=20, help='Number of samples after the peak to include in the snippet')
-@pr.parameter('npca_per_channel', type=int, default=3, help='Number of PCA features per channel in the initial dimension reduction step')
-@pr.parameter('npca_per_subdivision', type=int, default=10, help='Number of PCA features to compute at each stage of clustering in the isosplit6 subdivision method')
-@pr.parameter('snippet_mask_radius', type=float, default=250, help='Radius of the mask to apply to the extracted snippets')
-@pr.parameter('scheme1_detect_channel_radius', type=float, default=150, help='Channel radius for excluding events that are too close in time in scheme 1')
-@pr.parameter('scheme2_phase1_detect_channel_radius', type=float, default=200, help='Channel radius for excluding events that are too close in time during phase 1 of scheme 2')
-@pr.parameter('scheme2_detect_channel_radius', type=float, default=50, help='Channel radius for excluding events that are too close in time during phase 2 of scheme 2')
-@pr.parameter('scheme2_max_num_snippets_per_training_batch', type=int, default=200, help='Maximum number of snippets to use in each batch for training during phase 2 of scheme 2')
-@pr.parameter('scheme2_training_duration_sec', type=float, default=60 * 5, help='Duration of training data to use in scheme 2')
-@pr.parameter('scheme2_training_recording_sampling_mode', type=str, default='uniform', help='initial or uniform', options=['initial', 'uniform'])
-@pr.parameter('scheme3_block_duration_sec', type=float, default=60 * 30, help='Duration of each block in scheme 3')
-@pr.parameter('freq_min', type=float, default=300, help='High-pass filter cutoff frequency')
-@pr.parameter('freq_max', type=float, default=6000, help='Low-pass filter cutoff frequency')
-@pr.parameter('filter', type=bool, default=True, help='Enable or disable filter')
-@pr.parameter('whiten', type=bool, default=True, help='Enable or disable whiten')
-@pr.parameter('test_duration_sec', type=float, default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
+@pr.parameters(Mountainsort5Parameters)
 def mountainsort5(
     input: pr.InputFile,
     output: pr.OutputFile,
-    electrical_series_path: str,
-    scheme: int,
-    detect_threshold: float,
-    detect_sign: int,
-    detect_time_radius_msec: float,
-    snippet_T1: int,
-    snippet_T2: int,
-    npca_per_channel: int,
-    npca_per_subdivision: int,
-    snippet_mask_radius: int,
-    scheme1_detect_channel_radius: int,
-    scheme2_phase1_detect_channel_radius: int,
-    scheme2_detect_channel_radius: int,
-    scheme2_max_num_snippets_per_training_batch: int,
-    scheme2_training_duration_sec: int,
-    scheme2_training_recording_sampling_mode: str,
-    scheme3_block_duration_sec: int,
-    freq_min: int,
-    freq_max: int,
-    filter: bool,
-    whiten: bool,
-    test_duration_sec: float
+    parameters: Mountainsort5Parameters
 ):
     import h5py
     import spikeinterface as si
@@ -96,22 +90,22 @@ def mountainsort5(
     print('Creating input recording')
     recording = NwbRecording(
         file=f,
-        electrical_series_path=electrical_series_path
+        electrical_series_path=parameters.electrical_series_path
     )
     print_elapsed_time()
 
-    if test_duration_sec > 0:
-        recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * test_duration_sec))
+    if parameters.test_duration_sec > 0:
+        recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * parameters.test_duration_sec))
 
     # Make sure the recording is preprocessed appropriately
     # lazy preprocessing
-    if filter:
+    if parameters.preprocessing.filter:
         print('Filtering on')
-        recording_filtered = spre.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
+        recording_filtered = spre.bandpass_filter(recording, freq_min=parameters.preprocessing.freq_min, freq_max=parameters.preprocessing.freq_max)
     else:
         print('Filtering off')
         recording_filtered = recording
-    if whiten:
+    if parameters.preprocessing.whiten:
         print('Whitening on')
         # see comment below in _scale_recording_if_float_type
         recording_scaled = _scale_recording_if_float_type(recording_filtered)
@@ -131,51 +125,51 @@ def mountainsort5(
 
     print('Setting up sorting parameters')
     scheme1_sorting_parameters = ms5.Scheme1SortingParameters(
-        detect_threshold=detect_threshold,
-        detect_channel_radius=scheme1_detect_channel_radius,
-        detect_time_radius_msec=detect_time_radius_msec,
-        detect_sign=detect_sign,
-        snippet_T1=snippet_T1,
-        snippet_T2=snippet_T2,
-        snippet_mask_radius=snippet_mask_radius,
-        npca_per_channel=npca_per_channel,
-        npca_per_subdivision=npca_per_subdivision
+        detect_threshold=parameters.detect_threshold,
+        detect_channel_radius=parameters.scheme1_detect_channel_radius,
+        detect_time_radius_msec=parameters.detect_time_radius_msec,
+        detect_sign=parameters.detect_sign,
+        snippet_T1=parameters.snippet_T1,
+        snippet_T2=parameters.snippet_T2,
+        snippet_mask_radius=parameters.snippet_mask_radius,
+        npca_per_channel=parameters.npca_per_channel,
+        npca_per_subdivision=parameters.npca_per_subdivision
     )
 
     scheme2_sorting_parameters = ms5.Scheme2SortingParameters(
-        phase1_detect_channel_radius=scheme2_phase1_detect_channel_radius,
-        detect_channel_radius=scheme2_detect_channel_radius,
-        phase1_detect_threshold=detect_threshold,
-        phase1_detect_time_radius_msec=detect_time_radius_msec,
-        detect_time_radius_msec=detect_time_radius_msec,
-        phase1_npca_per_channel=npca_per_channel,
-        phase1_npca_per_subdivision=npca_per_subdivision,
-        detect_sign=detect_sign,
-        detect_threshold=detect_threshold,
-        snippet_T1=snippet_T1,
-        snippet_T2=snippet_T2,
-        snippet_mask_radius=snippet_mask_radius,
-        max_num_snippets_per_training_batch=scheme2_max_num_snippets_per_training_batch,
+        phase1_detect_channel_radius=parameters.scheme2.scheme2_phase1_detect_channel_radius,
+        detect_channel_radius=parameters.scheme2.scheme2_detect_channel_radius,
+        phase1_detect_threshold=parameters.detect_threshold,
+        phase1_detect_time_radius_msec=parameters.detect_time_radius_msec,
+        detect_time_radius_msec=parameters.detect_time_radius_msec,
+        phase1_npca_per_channel=parameters.npca_per_channel,
+        phase1_npca_per_subdivision=parameters.npca_per_subdivision,
+        detect_sign=parameters.detect_sign,
+        detect_threshold=parameters.detect_threshold,
+        snippet_T1=parameters.snippet_T1,
+        snippet_T2=parameters.snippet_T2,
+        snippet_mask_radius=parameters.snippet_mask_radius,
+        max_num_snippets_per_training_batch=parameters.scheme2.scheme2_max_num_snippets_per_training_batch,
         classifier_npca=None,
-        training_duration_sec=scheme2_training_duration_sec,
-        training_recording_sampling_mode=scheme2_training_recording_sampling_mode # type: ignore
+        training_duration_sec=parameters.scheme2.scheme2_training_duration_sec,
+        training_recording_sampling_mode=parameters.scheme2.scheme2_training_recording_sampling_mode # type: ignore
     )
 
     scheme3_sorting_parameters = ms5.Scheme3SortingParameters(
-        block_sorting_parameters=scheme2_sorting_parameters, block_duration_sec=scheme3_block_duration_sec
+        block_sorting_parameters=scheme2_sorting_parameters, block_duration_sec=parameters.scheme3_block_duration_sec
     )
 
-    if scheme == 1:
+    if parameters.scheme == 1:
         print('Sorting scheme 1')
         sorting = ms5.sorting_scheme1(recording=recording_binary, sorting_parameters=scheme1_sorting_parameters)
-    elif scheme == 2:
+    elif parameters.scheme == 2:
         print('Sorting scheme 2')
         sorting = ms5.sorting_scheme2(recording=recording_binary, sorting_parameters=scheme2_sorting_parameters)
-    elif scheme == 3:
+    elif parameters.scheme == 3:
         print('Sorting scheme 3')
         sorting = ms5.sorting_scheme3(recording=recording_binary, sorting_parameters=scheme3_sorting_parameters)
     else:
-        raise Exception(f'Unexpected scheme: {scheme}')
+        raise ValueError(f'Unexpected scheme: {parameters.scheme}')
     print_elapsed_time()
 
     print('Writing output NWB file')
@@ -213,11 +207,9 @@ def ms5_quicktest(
     electrical_series_path: str,
     test_duration_sec: float
 ):
-    mountainsort5(
-        input=input,
-        output=output,
+    parameters = Mountainsort5Parameters(
         electrical_series_path=electrical_series_path,
-        scheme=2,
+        scheme=1,
         detect_threshold=5.5,
         detect_sign=-1,
         detect_time_radius_msec=0.5,
@@ -227,17 +219,26 @@ def ms5_quicktest(
         npca_per_subdivision=10,
         snippet_mask_radius=250,
         scheme1_detect_channel_radius=150,
-        scheme2_phase1_detect_channel_radius=200,
-        scheme2_detect_channel_radius=50,
-        scheme2_max_num_snippets_per_training_batch=200,
-        scheme2_training_duration_sec=60 * 5,
-        scheme2_training_recording_sampling_mode='uniform',
+        scheme2=Mountainsort5Scheme2SortingParameters(
+            scheme2_phase1_detect_channel_radius=200,
+            scheme2_detect_channel_radius=50,
+            scheme2_max_num_snippets_per_training_batch=200,
+            scheme2_training_duration_sec=60 * 5,
+            scheme2_training_recording_sampling_mode='uniform'
+        ),
         scheme3_block_duration_sec=60 * 30,
-        freq_min=300,
-        freq_max=6000,
-        filter=True,
-        whiten=True,
+        preprocessing=Mountainsort5PreprocessingParameters(
+            freq_min=300,
+            freq_max=6000,
+            filter=True,
+            whiten=True
+        ),
         test_duration_sec=test_duration_sec
+    )
+    mountainsort5(
+        input=input,
+        output=output,
+        parameters=parameters
     )
 
 app.add_processor(mountainsort5)

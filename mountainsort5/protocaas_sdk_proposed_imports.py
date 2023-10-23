@@ -22,11 +22,13 @@ class _Parameter:
     def __init__(self, *,
         default: Any,
         help: str = '',
-        options: Optional[List[Any]] = None
+        options: Optional[List[Any]] = None,
+        secret: bool = False
     ):
         self.default = default
         self.help = help
         self.options = options
+        self.secret = secret
 
 _not_specified = object()
 
@@ -35,10 +37,12 @@ _not_specified = object()
 def parameter(*,
     default: Any=_not_specified,
     help: str = '',
-    options: Optional[List[Any]] = None
+    options: Optional[List[Any]] = None,
+    secret: bool = False
 ) -> Any: # it's important that this returns Any so that the linter is okay with using it
     return _Parameter(
         default=default,
         help=help,
-        options=options
+        options=options,
+        secret=secret
     )

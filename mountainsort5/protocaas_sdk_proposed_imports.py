@@ -11,8 +11,8 @@ class _ParameterGroup:
 # This would be defined inside protocaas.sdk
 # We need to use a function here rather than a class so that we can return the Any type
 def parameter_group(*,
-        help: str = ''
-    ) -> Any: # it's important that this returns Any so that the linter is okay with using it
+    help: str = ''
+) -> Any: # it's important that this returns Any so that the linter is okay with using it
     return _ParameterGroup(
         help=help
     )
@@ -35,7 +35,7 @@ _not_specified = object()
 # This would be defined inside protocaas.sdk
 # We need to use a function here rather than a class so that we can return the Any type
 def parameter(*,
-    default: Any=_not_specified,
+    default: Any = _not_specified,
     help: str = '',
     options: Optional[List[Any]] = None,
     secret: bool = False
@@ -46,3 +46,16 @@ def parameter(*,
         options=options,
         secret=secret
     )
+
+class ProtocaasProcessor:
+    name: str
+    label: str
+    help: str
+    tags: List[str]
+    attributes: dict
+
+    @staticmethod
+    def run(
+        context: Any
+    ):
+        raise NotImplementedError()

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import protocaas.sdk as pr
 
 # This would be imported from protocaas.sdk
-from protocaas_sdk_proposed_imports import parameter, input_file, output_file, parameter_group, ProtocaasProcessor
+from protocaas_sdk_proposed_imports import field, ProcessorBase
 
 
 app = pr.App(
@@ -17,18 +17,18 @@ app = pr.App(
 
 @dataclass
 class Mountainsort5PreprocessingParameters:
-    freq_min: int = parameter(default=300, help='High-pass filter cutoff frequency')
-    freq_max: int = parameter(default=6000, help='Low-pass filter cutoff frequency')
-    filter: bool = parameter(default=True, help='Enable or disable filter')
-    whiten: bool = parameter(default=True, help='Enable or disable whiten')
+    freq_min: int = field(default=300, help='High-pass filter cutoff frequency')
+    freq_max: int = field(default=6000, help='Low-pass filter cutoff frequency')
+    filter: bool = field(default=True, help='Enable or disable filter')
+    whiten: bool = field(default=True, help='Enable or disable whiten')
 
 @dataclass
 class Mountainsort5Scheme2SortingParameters:
-    scheme2_phase1_detect_channel_radius: int = parameter(default=200, help='Channel radius for excluding events that are too close in time during phase 1 of scheme 2')
-    scheme2_detect_channel_radius: int = parameter(default=50, help='Channel radius for excluding events that are too close in time during phase 2 of scheme 2')
-    scheme2_max_num_snippets_per_training_batch: int = parameter(default=200, help='Maximum number of snippets to use in each batch for training during phase 2 of scheme 2')
-    scheme2_training_duration_sec: int = parameter(default=60 * 5, help='Duration of training data to use in scheme 2')
-    scheme2_training_recording_sampling_mode: str = parameter(default='uniform', help='initial or uniform', options=['initial', 'uniform'])
+    scheme2_phase1_detect_channel_radius: int = field(default=200, help='Channel radius for excluding events that are too close in time during phase 1 of scheme 2')
+    scheme2_detect_channel_radius: int = field(default=50, help='Channel radius for excluding events that are too close in time during phase 2 of scheme 2')
+    scheme2_max_num_snippets_per_training_batch: int = field(default=200, help='Maximum number of snippets to use in each batch for training during phase 2 of scheme 2')
+    scheme2_training_duration_sec: int = field(default=60 * 5, help='Duration of training data to use in scheme 2')
+    scheme2_training_recording_sampling_mode: str = field(default='uniform', help='initial or uniform', options=['initial', 'uniform'])
 
 description = """
 MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.
@@ -38,25 +38,25 @@ See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.10
 
 @dataclass
 class Mountainsort5ProcessorContext:
-    input: pr.InputFile = input_file(help='Input NWB file')
-    output: pr.OutputFile = output_file(help='Output NWB file')
-    electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    scheme: int = parameter(default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
-    detect_threshold: float = parameter(default=5.5, help='Detection threshold - recommend to use the default')
-    detect_sign: int = parameter(default=-1, help='Use -1 for detecting negative peaks, 1 for positive, 0 for both', options=[-1, 0, 1])
-    detect_time_radius_msec: float = parameter(default=0.5, help='Determines the minimum allowable time interval between detected spikes in the same spatial region')
-    snippet_T1: int = parameter(default=20, help='Number of samples before the peak to include in the snippet')
-    snippet_T2: int = parameter(default=20, help='Number of samples after the peak to include in the snippet')
-    npca_per_channel: int = parameter(default=3, help='Number of PCA features per channel in the initial dimension reduction step')
-    npca_per_subdivision: int = parameter(default=10, help='Number of PCA features to compute at each stage of clustering in the isosplit6 subdivision method')
-    snippet_mask_radius: int = parameter(default=250, help='Radius of the mask to apply to the extracted snippets')
-    scheme1_detect_channel_radius: int = parameter(default=150, help='Channel radius for excluding events that are too close in time in scheme 1')
-    scheme2: Mountainsort5Scheme2SortingParameters = parameter_group(help='Parameters for scheme 2') # indicate somehow that this is active only if scheme == 2 or 3
-    scheme3_block_duration_sec: int = parameter(default=60 * 30, help='Duration of each block in scheme 3') # indicate somehow that this is active only if scheme == 3
-    preprocessing: Mountainsort5PreprocessingParameters = parameter_group(help='Preprocessing parameters')
-    test_duration_sec: float = parameter(default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
+    input: pr.InputFile = field(help='Input NWB file')
+    output: pr.OutputFile = field(help='Output NWB file')
+    electrical_series_path: str = field(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
+    scheme: int = field(default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
+    detect_threshold: float = field(default=5.5, help='Detection threshold - recommend to use the default')
+    detect_sign: int = field(default=-1, help='Use -1 for detecting negative peaks, 1 for positive, 0 for both', options=[-1, 0, 1])
+    detect_time_radius_msec: float = field(default=0.5, help='Determines the minimum allowable time interval between detected spikes in the same spatial region')
+    snippet_T1: int = field(default=20, help='Number of samples before the peak to include in the snippet')
+    snippet_T2: int = field(default=20, help='Number of samples after the peak to include in the snippet')
+    npca_per_channel: int = field(default=3, help='Number of PCA features per channel in the initial dimension reduction step')
+    npca_per_subdivision: int = field(default=10, help='Number of PCA features to compute at each stage of clustering in the isosplit6 subdivision method')
+    snippet_mask_radius: int = field(default=250, help='Radius of the mask to apply to the extracted snippets')
+    scheme1_detect_channel_radius: int = field(default=150, help='Channel radius for excluding events that are too close in time in scheme 1')
+    scheme2: Mountainsort5Scheme2SortingParameters = field(help='Parameters for scheme 2') # indicate somehow that this is active only if scheme == 2 or 3
+    scheme3_block_duration_sec: int = field(default=60 * 30, help='Duration of each block in scheme 3') # indicate somehow that this is active only if scheme == 3
+    preprocessing: Mountainsort5PreprocessingParameters = field(help='Preprocessing parameters')
+    test_duration_sec: float = field(default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
 
-class Mountainsort5Processor(ProtocaasProcessor):
+class Mountainsort5Processor(ProcessorBase):
     name = 'mountainsort5'
     label = 'MountainSort 5 spike sorter'
     help = description
@@ -197,12 +197,12 @@ For running tests. Runs MountainSort5 scheme 1 with default parameters on the fi
 """
 
 class MS5QuickTestProcessorContext:
-    input: pr.InputFile = input_file(help='Input NWB file')
-    output: pr.OutputFile = output_file(help='Output NWB file')
-    electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    test_duration_sec: float = parameter(default=60 * 5, help='Duration of the recording in seconds')
+    input: pr.InputFile = field(help='Input NWB file')
+    output: pr.OutputFile = field(help='Output NWB file')
+    electrical_series_path: str = field(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
+    test_duration_sec: float = field(default=60 * 5, help='Duration of the recording in seconds')
 
-class MS5QuickTestProcessor(ProtocaasProcessor):
+class MS5QuickTestProcessor(ProcessorBase):
     name = 'ms5_quicktest'
     label = 'MountainSort5 Quick Test'
     help = description_quicktest

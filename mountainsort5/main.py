@@ -30,8 +30,16 @@ class Mountainsort5Scheme2SortingParameters:
     scheme2_training_duration_sec: int = parameter(default=60 * 5, help='Duration of training data to use in scheme 2')
     scheme2_training_recording_sampling_mode: str = parameter(default='uniform', help='initial or uniform', options=['initial', 'uniform'])
 
+description = """
+MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.
+By employing Isosplit, a non-parametric density-based clustering approach, the software minimizes the need for manual intervention, thereby reducing errors and inconsistencies.
+See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.1016/j.neuron.2017.08.030
+"""
+
 @dataclass
-class Mountainsort5Parameters:
+class Mountainsort5ProcessorContext:
+    input: pr.InputFile
+    output: pr.OutputFile
     electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
     scheme: int = parameter(default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
     detect_threshold: float = parameter(default=5.5, help='Detection threshold - recommend to use the default')
@@ -48,18 +56,6 @@ class Mountainsort5Parameters:
     preprocessing: Mountainsort5PreprocessingParameters = parameter_group(help='Preprocessing parameters')
     test_duration_sec: float = parameter(default=0, help='For testing purposes: duration of the recording in seconds (0 means all)')
 
-description = """
-MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.
-By employing Isosplit, a non-parametric density-based clustering approach, the software minimizes the need for manual intervention, thereby reducing errors and inconsistencies.
-See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.1016/j.neuron.2017.08.030
-"""
-
-@dataclass
-class Mountainsort5ProcessorContext:
-    input: pr.InputFile
-    output: pr.OutputFile
-    parameters: Mountainsort5Parameters
-
 class Mountainsort5Processor(ProtocaasProcessor):
     name = 'mountainsort5'
     label = 'MountainSort 5 spike sorter'
@@ -70,9 +66,7 @@ class Mountainsort5Processor(ProtocaasProcessor):
     }
 
     @staticmethod
-    def run(
-        context: Mountainsort5ProcessorContext
-    ):
+    def run(context: Mountainsort5ProcessorContext):
         import h5py
         import spikeinterface as si
         import remfile
@@ -87,7 +81,6 @@ class Mountainsort5Processor(ProtocaasProcessor):
 
         input = context.input
         output = context.output
-        parameters = context.parameters
 
         print('Starting mountainsort5 processor')
         start_timer()
@@ -101,22 +94,22 @@ class Mountainsort5Processor(ProtocaasProcessor):
         print('Creating input recording')
         recording = NwbRecording(
             file=f,
-            electrical_series_path=parameters.electrical_series_path
+            electrical_series_path=context.electrical_series_path
         )
         print_elapsed_time()
 
-        if parameters.test_duration_sec > 0:
-            recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * parameters.test_duration_sec))
+        if context.test_duration_sec > 0:
+            recording = recording.frame_slice(0, int(recording.get_sampling_frequency() * context.test_duration_sec))
 
         # Make sure the recording is preprocessed appropriately
         # lazy preprocessing
-        if parameters.preprocessing.filter:
+        if context.preprocessing.filter:
             print('Filtering on')
-            recording_filtered = spre.bandpass_filter(recording, freq_min=parameters.preprocessing.freq_min, freq_max=parameters.preprocessing.freq_max)
+            recording_filtered = spre.bandpass_filter(recording, freq_min=context.preprocessing.freq_min, freq_max=context.preprocessing.freq_max)
         else:
             print('Filtering off')
             recording_filtered = recording
-        if parameters.preprocessing.whiten:
+        if context.preprocessing.whiten:
             print('Whitening on')
             # see comment below in _scale_recording_if_float_type
             recording_scaled = _scale_recording_if_float_type(recording_filtered)
@@ -136,51 +129,51 @@ class Mountainsort5Processor(ProtocaasProcessor):
 
         print('Setting up sorting parameters')
         scheme1_sorting_parameters = ms5.Scheme1SortingParameters(
-            detect_threshold=parameters.detect_threshold,
-            detect_channel_radius=parameters.scheme1_detect_channel_radius,
-            detect_time_radius_msec=parameters.detect_time_radius_msec,
-            detect_sign=parameters.detect_sign,
-            snippet_T1=parameters.snippet_T1,
-            snippet_T2=parameters.snippet_T2,
-            snippet_mask_radius=parameters.snippet_mask_radius,
-            npca_per_channel=parameters.npca_per_channel,
-            npca_per_subdivision=parameters.npca_per_subdivision
+            detect_threshold=context.detect_threshold,
+            detect_channel_radius=context.scheme1_detect_channel_radius,
+            detect_time_radius_msec=context.detect_time_radius_msec,
+            detect_sign=context.detect_sign,
+            snippet_T1=context.snippet_T1,
+            snippet_T2=context.snippet_T2,
+            snippet_mask_radius=context.snippet_mask_radius,
+            npca_per_channel=context.npca_per_channel,
+            npca_per_subdivision=context.npca_per_subdivision
         )
 
         scheme2_sorting_parameters = ms5.Scheme2SortingParameters(
-            phase1_detect_channel_radius=parameters.scheme2.scheme2_phase1_detect_channel_radius,
-            detect_channel_radius=parameters.scheme2.scheme2_detect_channel_radius,
-            phase1_detect_threshold=parameters.detect_threshold,
-            phase1_detect_time_radius_msec=parameters.detect_time_radius_msec,
-            detect_time_radius_msec=parameters.detect_time_radius_msec,
-            phase1_npca_per_channel=parameters.npca_per_channel,
-            phase1_npca_per_subdivision=parameters.npca_per_subdivision,
-            detect_sign=parameters.detect_sign,
-            detect_threshold=parameters.detect_threshold,
-            snippet_T1=parameters.snippet_T1,
-            snippet_T2=parameters.snippet_T2,
-            snippet_mask_radius=parameters.snippet_mask_radius,
-            max_num_snippets_per_training_batch=parameters.scheme2.scheme2_max_num_snippets_per_training_batch,
+            phase1_detect_channel_radius=context.scheme2.scheme2_phase1_detect_channel_radius,
+            detect_channel_radius=context.scheme2.scheme2_detect_channel_radius,
+            phase1_detect_threshold=context.detect_threshold,
+            phase1_detect_time_radius_msec=context.detect_time_radius_msec,
+            detect_time_radius_msec=context.detect_time_radius_msec,
+            phase1_npca_per_channel=context.npca_per_channel,
+            phase1_npca_per_subdivision=context.npca_per_subdivision,
+            detect_sign=context.detect_sign,
+            detect_threshold=context.detect_threshold,
+            snippet_T1=context.snippet_T1,
+            snippet_T2=context.snippet_T2,
+            snippet_mask_radius=context.snippet_mask_radius,
+            max_num_snippets_per_training_batch=context.scheme2.scheme2_max_num_snippets_per_training_batch,
             classifier_npca=None,
-            training_duration_sec=parameters.scheme2.scheme2_training_duration_sec,
-            training_recording_sampling_mode=parameters.scheme2.scheme2_training_recording_sampling_mode # type: ignore
+            training_duration_sec=context.scheme2.scheme2_training_duration_sec,
+            training_recording_sampling_mode=context.scheme2.scheme2_training_recording_sampling_mode # type: ignore
         )
 
         scheme3_sorting_parameters = ms5.Scheme3SortingParameters(
-            block_sorting_parameters=scheme2_sorting_parameters, block_duration_sec=parameters.scheme3_block_duration_sec
+            block_sorting_parameters=scheme2_sorting_parameters, block_duration_sec=context.scheme3_block_duration_sec
         )
 
-        if parameters.scheme == 1:
+        if context.scheme == 1:
             print('Sorting scheme 1')
             sorting = ms5.sorting_scheme1(recording=recording_binary, sorting_parameters=scheme1_sorting_parameters)
-        elif parameters.scheme == 2:
+        elif context.scheme == 2:
             print('Sorting scheme 2')
             sorting = ms5.sorting_scheme2(recording=recording_binary, sorting_parameters=scheme2_sorting_parameters)
-        elif parameters.scheme == 3:
+        elif context.scheme == 3:
             print('Sorting scheme 3')
             sorting = ms5.sorting_scheme3(recording=recording_binary, sorting_parameters=scheme3_sorting_parameters)
         else:
-            raise ValueError(f'Unexpected scheme: {parameters.scheme}')
+            raise ValueError(f'Unexpected scheme: {context.scheme}')
         print_elapsed_time()
 
         print('Writing output NWB file')
@@ -206,8 +199,8 @@ For running tests. Runs MountainSort5 scheme 1 with default parameters on the fi
 class MS5QuickTestProcessorContext:
     input: pr.InputFile
     output: pr.OutputFile
-    electrical_series_path: str
-    test_duration_sec: float
+    electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
+    test_duration_sec: float = parameter(default=60 * 5, help='Duration of the recording in seconds')
 
 class MS5QuickTestProcessor(ProtocaasProcessor):
     name = 'ms5_quicktest'
@@ -219,15 +212,15 @@ class MS5QuickTestProcessor(ProtocaasProcessor):
     }
 
     @staticmethod
-    def run(
-        context: MS5QuickTestProcessorContext
-    ):
+    def run(context: MS5QuickTestProcessorContext):
         input = context.input
         output = context.output
         electrical_series_path = context.electrical_series_path
         test_duration_sec = context.test_duration_sec
 
-        parameters = Mountainsort5Parameters(
+        context0 = Mountainsort5ProcessorContext(
+            input=input,
+            output=output,
             electrical_series_path=electrical_series_path,
             scheme=1,
             detect_threshold=5.5,
@@ -256,13 +249,7 @@ class MS5QuickTestProcessor(ProtocaasProcessor):
             test_duration_sec=test_duration_sec
         )
 
-        Mountainsort5Processor.run(
-            Mountainsort5ProcessorContext(
-                input=input,
-                output=output,
-                parameters=parameters
-            )
-        )
+        Mountainsort5Processor.run(context0)
 
 app.add_processor(Mountainsort5Processor)
 app.add_processor(MS5QuickTestProcessor)

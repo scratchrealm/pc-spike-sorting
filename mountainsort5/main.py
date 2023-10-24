@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import protocaas.sdk as pr
 
 # This would be imported from protocaas.sdk
-from protocaas_sdk_proposed_imports import parameter, parameter_group, ProtocaasProcessor
+from protocaas_sdk_proposed_imports import parameter, input_file, output_file, parameter_group, ProtocaasProcessor
 
 
 app = pr.App(
@@ -38,8 +38,8 @@ See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.10
 
 @dataclass
 class Mountainsort5ProcessorContext:
-    input: pr.InputFile
-    output: pr.OutputFile
+    input: pr.InputFile = input_file(help='Input NWB file')
+    output: pr.OutputFile = output_file(help='Output NWB file')
     electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
     scheme: int = parameter(default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
     detect_threshold: float = parameter(default=5.5, help='Detection threshold - recommend to use the default')
@@ -197,8 +197,8 @@ For running tests. Runs MountainSort5 scheme 1 with default parameters on the fi
 """
 
 class MS5QuickTestProcessorContext:
-    input: pr.InputFile
-    output: pr.OutputFile
+    input: pr.InputFile = input_file(help='Input NWB file')
+    output: pr.OutputFile = output_file(help='Output NWB file')
     electrical_series_path: str = parameter(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
     test_duration_sec: float = parameter(default=60 * 5, help='Duration of the recording in seconds')
 

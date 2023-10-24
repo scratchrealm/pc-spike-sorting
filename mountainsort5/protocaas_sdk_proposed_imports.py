@@ -47,6 +47,32 @@ def parameter(*,
         secret=secret
     )
 
+class _InputFile:
+    def __init__(self, *,
+        help: str = ''
+    ):
+        self.help = help
+
+def input_file(*,
+    help: str = ''
+) -> Any:
+    return _InputFile(
+        help=help
+    )
+
+class _OutputFile:
+    def __init__(self, *,
+        help: str = ''
+    ):
+        self.help = help
+
+def output_file(*,
+    help: str = ''
+) -> Any:
+    return _OutputFile(
+        help=help
+    )
+
 class ProtocaasProcessor:
     name: str
     label: str

@@ -1,79 +1,37 @@
 from typing import Any, Optional, List
 
 
-# This would be defined inside protocaas.sdk
-class _ParameterGroup:
-    def __init__(self, *,
-        help: str = ''
-    ):
-        self.help = help
+_not_specified = object()
 
 # This would be defined inside protocaas.sdk
-# We need to use a function here rather than a class so that we can return the Any type
-def parameter_group(*,
-    help: str = ''
-) -> Any: # it's important that this returns Any so that the linter is okay with using it
-    return _ParameterGroup(
-        help=help
-    )
-
-# This would be defined inside protocaas.sdk
-class _Parameter:
+class _Field:
     def __init__(self, *,
-        default: Any,
         help: str = '',
-        options: Optional[List[Any]] = None,
-        secret: bool = False
+        default: Optional[Any] = _not_specified, # only applies to parameters
+        options: Optional[List[Any]] = None, # only applies to parameters
+        secret: Optional[bool] = None # only applies to parameters
     ):
         self.default = default
         self.help = help
         self.options = options
         self.secret = secret
 
-_not_specified = object()
-
 # This would be defined inside protocaas.sdk
 # We need to use a function here rather than a class so that we can return the Any type
-def parameter(*,
-    default: Any = _not_specified,
+def field(*,
     help: str = '',
-    options: Optional[List[Any]] = None,
-    secret: bool = False
+    default: Optional[Any] = _not_specified, # only applies to parameters
+    options: Optional[List[Any]] = None, # only applies to parameters
+    secret: Optional[bool] = None # only applies to parameters
 ) -> Any: # it's important that this returns Any so that the linter is okay with using it
-    return _Parameter(
-        default=default,
+    return _Field(
         help=help,
+        default=default,
         options=options,
         secret=secret
     )
 
-class _InputFile:
-    def __init__(self, *,
-        help: str = ''
-    ):
-        self.help = help
-
-def input_file(*,
-    help: str = ''
-) -> Any:
-    return _InputFile(
-        help=help
-    )
-
-class _OutputFile:
-    def __init__(self, *,
-        help: str = ''
-    ):
-        self.help = help
-
-def output_file(*,
-    help: str = ''
-) -> Any:
-    return _OutputFile(
-        help=help
-    )
-
-class ProtocaasProcessor:
+class ProcessorBase:
     name: str
     label: str
     help: str

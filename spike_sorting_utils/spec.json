@@ -1,12 +1,14 @@
 {
     "name": "spike_sorting_utils",
     "help": "Utilities for working with spike sorting data",
-    "image": "magland/pc-spike-sorting-utils",
-    "executable": "/app/main",
+    "appImage": "magland/pc-spike-sorting-utils",
+    "appExecutable": "/app/main.py",
+    "executable": "/app/main.py",
     "processors": [
         {
             "name": "spike_sorting_figurl",
             "help": "\nCreate summary data for a spike sorting run.\n",
+            "label": "Spike sorting figurl",
             "inputs": [
                 {
                     "name": "recording",
@@ -34,10 +36,6 @@
                 {
                     "name": "wip",
                     "value": true
-                },
-                {
-                    "name": "label",
-                    "value": "Spike sorting figurl"
                 }
             ],
             "tags": [

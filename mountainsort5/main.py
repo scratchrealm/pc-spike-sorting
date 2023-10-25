@@ -2,13 +2,10 @@
 
 import os
 from dataclasses import dataclass
-import protocaas.sdk as pr
-
-# This would be imported from protocaas.sdk
-from protocaas_sdk_proposed_imports import field, ProcessorBase
+from protocaas.sdk import App, field, ProcessorBase, InputFile, OutputFile
 
 
-app = pr.App(
+app = App(
     'mountainsort5',
     help="MountainSort5 spike sorting",
     app_image="magland/pc-mountainsort5",
@@ -38,8 +35,8 @@ See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.10
 
 @dataclass
 class Mountainsort5ProcessorContext:
-    input: pr.InputFile = field(help='Input NWB file')
-    output: pr.OutputFile = field(help='Output NWB file')
+    input: InputFile = field(help='Input NWB file')
+    output: OutputFile = field(help='Output NWB file')
     electrical_series_path: str = field(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
     scheme: int = field(default=2, help='Which sorting scheme to use: 1, 2, or 3', options=[1, 2, 3])
     detect_threshold: float = field(default=5.5, help='Detection threshold - recommend to use the default')
@@ -197,8 +194,8 @@ For running tests. Runs MountainSort5 scheme 1 with default parameters on the fi
 """
 
 class MS5QuickTestProcessorContext:
-    input: pr.InputFile = field(help='Input NWB file')
-    output: pr.OutputFile = field(help='Output NWB file')
+    input: InputFile = field(help='Input NWB file')
+    output: OutputFile = field(help='Output NWB file')
     electrical_series_path: str = field(help='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
     test_duration_sec: float = field(default=60 * 5, help='Duration of the recording in seconds')
 

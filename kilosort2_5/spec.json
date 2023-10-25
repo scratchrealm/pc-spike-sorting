@@ -1,12 +1,14 @@
 {
     "name": "kilosort2_5",
-    "help": "Kilosort 2.5 spike sorting",
-    "image": "magland/pc-kilosort2_5",
-    "executable": "/app/main",
+    "help": "Kilosort2_5 spike sorting",
+    "appImage": "magland/pc-kilosort2_5",
+    "appExecutable": "/app/main.py",
+    "executable": "/app/main.py",
     "processors": [
         {
             "name": "kilosort2_5",
             "help": "\nKilosort 2.5\n",
+            "label": "Kilosort 2.5",
             "inputs": [
                 {
                     "name": "input",
@@ -21,9 +23,22 @@
             ],
             "parameters": [
                 {
-                    "name": "electrical_series_path",
-                    "help": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
-                    "type": "str"
+                    "name": "AUCsplit",
+                    "help": "Threshold on the area under the curve (AUC) criterion for performing a split in the final step",
+                    "type": "float",
+                    "default": 0.9
+                },
+                {
+                    "name": "NT",
+                    "help": "Batch size (if -1 it is automatically computed)",
+                    "type": "int",
+                    "default": -1
+                },
+                {
+                    "name": "car",
+                    "help": "Enable or disable common reference",
+                    "type": "bool",
+                    "default": true
                 },
                 {
                     "name": "detect_threshold",
@@ -32,23 +47,25 @@
                     "default": 6
                 },
                 {
-                    "name": "projection_threshold",
-                    "help": "Threshold on projections",
-                    "type": "List[float]",
-                    "default": [
-                        10,
-                        4
-                    ]
+                    "name": "do_correction",
+                    "help": "If True drift registration is applied",
+                    "type": "bool",
+                    "default": true
                 },
                 {
-                    "name": "preclust_threshold",
-                    "help": "Threshold crossings for pre-clustering (in PCA projection space)",
+                    "name": "electrical_series_path",
+                    "help": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
+                    "type": "str"
+                },
+                {
+                    "name": "freq_min",
+                    "help": "High-pass filter cutoff frequency",
                     "type": "float",
-                    "default": 8
+                    "default": 150
                 },
                 {
-                    "name": "car",
-                    "help": "Enable or disable common reference",
+                    "name": "keep_good_only",
+                    "help": "If True only 'good' units are returned",
                     "type": "bool",
                     "default": true
                 },
@@ -65,40 +82,16 @@
                     "default": 0.1
                 },
                 {
-                    "name": "nblocks",
-                    "help": "blocks for registration. 0 turns it off, 1 does rigid registration. Replaces 'datashift' option.",
-                    "type": "int",
-                    "default": 5
-                },
-                {
-                    "name": "sig",
-                    "help": "spatial smoothness constant for registration",
-                    "type": "float",
-                    "default": 20
-                },
-                {
-                    "name": "freq_min",
-                    "help": "High-pass filter cutoff frequency",
-                    "type": "float",
-                    "default": 150
-                },
-                {
-                    "name": "sigmaMask",
-                    "help": "Spatial constant in um for computing residual variance of spike",
-                    "type": "float",
-                    "default": 30
-                },
-                {
                     "name": "nPCs",
                     "help": "Number of PCA dimensions",
                     "type": "int",
                     "default": 3
                 },
                 {
-                    "name": "ntbuff",
-                    "help": "Samples of symmetrical buffer for whitening and spike detection",
+                    "name": "nblocks",
+                    "help": "blocks for registration. 0 turns it off, 1 does rigid registration. Replaces 'datashift' option.",
                     "type": "int",
-                    "default": 64
+                    "default": 5
                 },
                 {
                     "name": "nfilt_factor",
@@ -107,40 +100,25 @@
                     "default": 4
                 },
                 {
-                    "name": "NT",
-                    "help": "Batch size (if -1 it is automatically computed)",
+                    "name": "ntbuff",
+                    "help": "Samples of symmetrical buffer for whitening and spike detection",
                     "type": "int",
-                    "default": -1
+                    "default": 64
                 },
                 {
-                    "name": "AUCsplit",
-                    "help": "Threshold on the area under the curve (AUC) criterion for performing a split in the final step",
+                    "name": "preclust_threshold",
+                    "help": "Threshold crossings for pre-clustering (in PCA projection space)",
                     "type": "float",
-                    "default": 0.9
+                    "default": 8
                 },
                 {
-                    "name": "do_correction",
-                    "help": "If True drift registration is applied",
-                    "type": "bool",
-                    "default": true
-                },
-                {
-                    "name": "wave_length",
-                    "help": "size of the waveform extracted around each detected peak, (Default 61, maximum 81)",
-                    "type": "float",
-                    "default": 61
-                },
-                {
-                    "name": "keep_good_only",
-                    "help": "If True only 'good' units are returned",
-                    "type": "bool",
-                    "default": true
-                },
-                {
-                    "name": "skip_kilosort_preprocessing",
-                    "help": "Can optionaly skip the internal kilosort preprocessing",
-                    "type": "bool",
-                    "default": false
+                    "name": "projection_threshold",
+                    "help": "Threshold on projections",
+                    "type": "List[float]",
+                    "default": [
+                        10,
+                        4
+                    ]
                 },
                 {
                     "name": "scaleproc",
@@ -149,20 +127,40 @@
                     "default": -1
                 },
                 {
+                    "name": "sig",
+                    "help": "spatial smoothness constant for registration",
+                    "type": "float",
+                    "default": 20
+                },
+                {
+                    "name": "sigmaMask",
+                    "help": "Spatial constant in um for computing residual variance of spike",
+                    "type": "float",
+                    "default": 30
+                },
+                {
+                    "name": "skip_kilosort_preprocessing",
+                    "help": "Can optionaly skip the internal kilosort preprocessing",
+                    "type": "bool",
+                    "default": false
+                },
+                {
                     "name": "test_duration_sec",
                     "help": "For testing purposes: duration of the recording in seconds (0 means all)",
                     "type": "float",
                     "default": 0
+                },
+                {
+                    "name": "wave_length",
+                    "help": "size of the waveform extracted around each detected peak, (Default 61, maximum 81)",
+                    "type": "float",
+                    "default": 61
                 }
             ],
             "attributes": [
                 {
                     "name": "wip",
                     "value": true
-                },
-                {
-                    "name": "label",
-                    "value": "Kilosort 2.5"
                 }
             ],
             "tags": [
@@ -177,6 +175,7 @@
         {
             "name": "ks2_5_quicktest",
             "help": "\nFor running tests. Runs Kilosort 2.5 with default parameters on the first portion of the recording.\n",
+            "label": "Kilosort 2.5 Quick Test",
             "inputs": [
                 {
                     "name": "input",
@@ -206,10 +205,6 @@
                 {
                     "name": "wip",
                     "value": true
-                },
-                {
-                    "name": "label",
-                    "value": "Kilosort 2.5 Quick Test"
                 }
             ],
             "tags": [

@@ -21,7 +21,8 @@
                 {
                     "name": "dandi_api_key",
                     "help": "DANDI API key",
-                    "type": "str"
+                    "type": "str",
+                    "secret": true
                 },
                 {
                     "name": "dandi_instance",

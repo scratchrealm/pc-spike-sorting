@@ -3,7 +3,7 @@ FROM python
 RUN mkdir /src
 
 # Install protocaas from source, for now
-RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && echo "v13" && \
+RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && echo "v20" && \
     cd /src/protocaas/python && \
     pip install -e .
 

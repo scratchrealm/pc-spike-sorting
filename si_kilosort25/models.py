@@ -1,5 +1,6 @@
 from protocaas.sdk import field, InputFile, OutputFile
 from dataclasses import dataclass
+from typing import Optional
 
 
 
@@ -45,7 +46,7 @@ class HighpassSpatialFilter:
 
 
 @dataclass
-class PreprocessingModel:
+class PreprocessingContext:
     highpass_filter: HighpassFilter
     phase_shift: PhaseShift
     detect_bad_channels: DetectBadChannels
@@ -55,13 +56,6 @@ class PreprocessingModel:
     remove_out_channels: bool = field(default=False, help="Flag to remove out channels")
     remove_bad_channels: bool = field(default=False, help="Flag to remove bad channels")
     max_bad_channel_fraction_to_remove: float = field(default=1.1, help="Maximum fraction of bad channels to remove")
-
-
-@dataclass
-class PreprocessingContext:
-    input: InputFile = field(help='Input NWB file')
-    output: OutputFile = field(help='Output NWB file')
-    preprocessing_kwargs: PreprocessingModel = field(help='Preprocessing parameters')
 
 
 # ------------------------------
@@ -93,6 +87,8 @@ class CurationContext:
 # ------------------------------
 @dataclass
 class PipelineContext:
+    input: InputFile = field(help='Input NWB file')
+    output: OutputFile = field(help='Output NWB file')
     preprocessing_context: PreprocessingContext
     sorting_context: SortingContext
     postprocessing_context: PostprocessingContext

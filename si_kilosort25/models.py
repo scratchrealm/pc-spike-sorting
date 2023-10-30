@@ -1,4 +1,4 @@
-from protocaas.sdk import field, InputFile, OutputFile
+from dendro.sdk import field, InputFile, OutputFile
 from dataclasses import dataclass
 from typing import Optional
 
@@ -62,8 +62,27 @@ class PreprocessingContext:
 # Sorter Models
 # ------------------------------
 @dataclass
-class SortingContext:
-    pass 
+class Kilosort25SortingContext:
+    detect_threshold: float = field(default=6, help="Threshold for spike detection")
+    projection_threshold: list = field(default=[10, 4], help="Threshold on projections")
+    preclust_threshold: float = field(default=8, help="Threshold crossings for pre-clustering (in PCA projection space)")
+    car: bool = field(default=True, help="Enable or disable common reference")
+    minFR: float = field(default=0.1, help="Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed")
+    minfr_goodchannels: float = field(default=0.1, help="Minimum firing rate on a 'good' channel")
+    nblocks: int = field(default=5, help="blocks for registration. 0 turns it off, 1 does rigid registration. Replaces 'datashift' option.")
+    sig: float = field(default=20, help="spatial smoothness constant for registration")
+    freq_min: float = field(default=150, help="High-pass filter cutoff frequency")
+    sigmaMask: float = field(default=30, help="Spatial constant in um for computing residual variance of spike")
+    nPCs: int = field(default=3, help="Number of PCA dimensions")
+    ntbuff: int = field(default=64, help="Samples of symmetrical buffer for whitening and spike detection")
+    nfilt_factor: int = field(default=4, help="Max number of clusters per good channel (even temporary ones) 4")
+    NT: int = field(default=-1, help='Batch size (if -1 it is automatically computed)')
+    AUCsplit: float = field(default=0.9, help="Threshold on the area under the curve (AUC) criterion for performing a split in the final step")
+    do_correction: bool = field(default=True, help="If True drift registration is applied")
+    wave_length: float = field(default=61, help="size of the waveform extracted around each detected peak, (Default 61, maximum 81)")
+    keep_good_only: bool = field(default=True, help="If True only 'good' units are returned")
+    skip_kilosort_preprocessing: bool = field(default=False, help="Can optionaly skip the internal kilosort preprocessing")
+    scaleproc: int = field(default=-1, help="int16 scaling of whitened data, if -1 set to 200.")
 
 
 # ------------------------------
@@ -89,10 +108,10 @@ class CurationContext:
 class PipelineContext:
     input: InputFile = field(help='Input NWB file')
     output: OutputFile = field(help='Output NWB file')
-    preprocessing_context: PreprocessingContext
-    sorting_context: SortingContext
-    postprocessing_context: PostprocessingContext
-    curation_context: CurationContext
+    preprocessing_context: PreprocessingContext = field(help='Preprocessing context')
+    sorting_context: Kilosort25SortingContext = field(help='Sorting context')
+    postprocessing_context: PostprocessingContext = field(help='Postprocessing context')
+    curation_context: CurationContext = field(help='Curation context')
 
 
 # # ------------------------------

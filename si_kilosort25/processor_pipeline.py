@@ -1,4 +1,4 @@
-from protocaas.sdk import ProcessorBase
+from dendro.sdk import ProcessorBase
 from spikeinterface_pipelines import pipeline as si_pipeline
 
 from .models import PipelineContext
@@ -14,9 +14,11 @@ class PipelineProcessor(ProcessorBase):
     def run(context: PipelineContext):
 
         # TODO - create SI recording from InputFile
-        
+
 
         # TODO - run pipeline
+
+        sorting_params = context.sorting_context
         si_pipeline.pipeline(
             recording=,
             results_path="./results/",

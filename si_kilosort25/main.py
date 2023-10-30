@@ -1,4 +1,4 @@
-import protocaas.sdk as pr
+import dendro.sdk as pr
 
 from .processor_pipeline import PipelineProcessor
 

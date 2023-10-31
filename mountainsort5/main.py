@@ -189,7 +189,7 @@ description_quicktest = """
 For running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.
 """
 
-class MS5QuickTestProcessorContext:
+class MS5QuickTestProcessorContext(BaseModel):
     input: InputFile = Field(description='Input NWB file')
     output: OutputFile = Field(description='Output NWB file')
     electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')

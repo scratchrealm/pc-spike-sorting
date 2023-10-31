@@ -5,13 +5,12 @@ from typing import List
 import json
 import shutil
 import subprocess
-from dataclasses import dataclass
-from dendro.sdk import App, ProcessorBase, field, InputFile
+from dendro.sdk import App, ProcessorBase, BaseModel, Field, InputFile
 
 
 app = App(
     'dandi_upload',
-    help="Upload files to DANDI",
+    description="Upload files to DANDI",
     app_image="magland/pc-dandi-upload",
     app_executable="/app/main.py"
 )
@@ -20,14 +19,13 @@ description = """
 Upload files to a dandiset on DANDI.
 """
 
-@dataclass
-class DandiUploadContext:
-    inputs: List[InputFile] = field(help='List of files to upload')
-    dandiset_id: str = field(help='Dandiset ID')
-    dandi_instance: str = field(default='dandi', help='dandi or dandi-staging')
-    dandi_api_key: str = field(help='DANDI API key', secret=True)
-    names: List[str] = field(help='Destination names in the dandiset')
-    was_generated_by_jsons: List[str] = field(help='The JSON strings containing the wasGeneratedBy metadata for each input file')
+class DandiUploadContext(BaseModel):
+    inputs: List[InputFile] = Field(description='List of files to upload')
+    dandiset_id: str = Field(description='Dandiset ID')
+    dandi_instance: str = Field(default='dandi', description='dandi or dandi-staging')
+    dandi_api_key: str = Field(description='DANDI API key', json_schema_extra={'secret': True})
+    names: List[str] = Field(description='Destination names in the dandiset')
+    was_generated_by_jsons: List[str] = Field(description='The JSON strings containing the wasGeneratedBy metadata for each input file')
 
 class DandiUploadProcessor(ProcessorBase):
     name = 'dandi_upload'

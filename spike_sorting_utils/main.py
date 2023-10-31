@@ -2,13 +2,12 @@
 
 import os
 from typing import List
-from dataclasses import dataclass
-from dendro.sdk import App, ProcessorBase, field, InputFile, OutputFile
+from dendro.sdk import App, ProcessorBase, BaseModel, Field, InputFile, OutputFile
 
 
 app = App(
     'spike_sorting_utils',
-    help="Utilities for working with spike sorting data",
+    description="Utilities for working with spike sorting data",
     app_image="magland/pc-spike-sorting-utils",
     app_executable="/app/main.py"
 )
@@ -17,12 +16,11 @@ description = """
 Create summary data for a spike sorting run.
 """
 
-@dataclass
-class SpikeSortingFigurlContext:
-    recording: InputFile = field(help='recording .nwb file')
-    sorting: InputFile = field(help='sorting .nwb file')
-    output: OutputFile = field(help='output .figurl file')
-    electrical_series_path: str = field(help='Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries')
+class SpikeSortingFigurlContext(BaseModel):
+    recording: InputFile = Field(description='recording .nwb file')
+    sorting: InputFile = Field(description='sorting .nwb file')
+    output: OutputFile = Field(description='output .figurl file')
+    electrical_series_path: str = Field(description='Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries')
 
 class SpikeSortingFigurlProcessor(ProcessorBase):
     name = 'spike_sorting_figurl'

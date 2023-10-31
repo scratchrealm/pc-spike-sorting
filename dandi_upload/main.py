@@ -6,7 +6,7 @@ import json
 import shutil
 import subprocess
 from dataclasses import dataclass
-from protocaas.sdk import App, ProcessorBase, field, InputFile
+from dendro.sdk import App, ProcessorBase, field, InputFile
 
 
 app = App(

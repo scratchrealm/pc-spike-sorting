@@ -3,7 +3,7 @@ from typing import Any, Optional, List
 
 _not_specified = object()
 
-# This would be defined inside protocaas.sdk
+# This would be defined inside dendro.sdk
 class _Field:
     def __init__(self, *,
         help: str = '',
@@ -16,7 +16,7 @@ class _Field:
         self.options = options
         self.secret = secret
 
-# This would be defined inside protocaas.sdk
+# This would be defined inside dendro.sdk
 # We need to use a function here rather than a class so that we can return the Any type
 def field(*,
     help: str = '',

@@ -2,9 +2,9 @@ FROM python
 
 RUN mkdir /src
 
-# Install protocaas from source, for now
-RUN git clone https://github.com/scratchrealm/protocaas.git /src/protocaas && echo "v24" && \
-    cd /src/protocaas/python && \
+# Install dendro from source, for now
+RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v24" && \
+    cd /src/dendro/python && \
     pip install -e .
 
 # Install dandi

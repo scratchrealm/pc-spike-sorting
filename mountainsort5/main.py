@@ -2,7 +2,7 @@
 
 import os
 from dataclasses import dataclass
-from protocaas.sdk import App, field, ProcessorBase, InputFile, OutputFile
+from dendro.sdk import App, field, ProcessorBase, InputFile, OutputFile
 
 
 app = App(

@@ -44,7 +44,7 @@ class Kilsort2_5Context(BaseModel):
 
 class Kilosort2_5Processor(ProcessorBase):
     name = 'kilosort2_5'
-    help = description
+    description = description
     label = 'Kilosort 2.5'
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {'wip': True}
@@ -145,7 +145,7 @@ class Kilsort2_5QuicktestContext(BaseModel):
 
 class Kilosort2_5QuicktestProcessor(ProcessorBase):
     name = 'ks2_5_quicktest'
-    help = description_quicktest
+    description = description_quicktest
     label = 'Kilosort 2.5 Quick Test'
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {'wip': True}

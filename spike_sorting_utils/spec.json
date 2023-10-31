@@ -1,34 +1,34 @@
 {
     "name": "spike_sorting_utils",
-    "help": "Utilities for working with spike sorting data",
+    "description": "Utilities for working with spike sorting data",
     "appImage": "magland/pc-spike-sorting-utils",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
     "processors": [
         {
             "name": "spike_sorting_figurl",
-            "help": "\nCreate summary data for a spike sorting run.\n",
+            "description": "\nCreate summary data for a spike sorting run.\n",
             "label": "Spike sorting figurl",
             "inputs": [
                 {
                     "name": "recording",
-                    "help": "recording .nwb file"
+                    "description": "recording .nwb file"
                 },
                 {
                     "name": "sorting",
-                    "help": "sorting .nwb file"
+                    "description": "sorting .nwb file"
                 }
             ],
             "outputs": [
                 {
                     "name": "output",
-                    "help": "output .figurl file"
+                    "description": "output .figurl file"
                 }
             ],
             "parameters": [
                 {
                     "name": "electrical_series_path",
-                    "help": "Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries",
+                    "description": "Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries",
                     "type": "str"
                 }
             ],

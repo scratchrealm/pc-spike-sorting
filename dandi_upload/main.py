@@ -29,7 +29,7 @@ class DandiUploadContext(BaseModel):
 
 class DandiUploadProcessor(ProcessorBase):
     name = 'dandi_upload'
-    help = description
+    description = description
     label = 'DANDI upload'
     tags = ['dandi']
     attributes = {'wip': True}

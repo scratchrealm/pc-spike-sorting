@@ -24,7 +24,7 @@ class SpikeSortingFigurlContext(BaseModel):
 
 class SpikeSortingFigurlProcessor(ProcessorBase):
     name = 'spike_sorting_figurl'
-    help = description
+    description = description
     label = 'Spike sorting figurl'
     tags = ['spike_sorting']
     attributes = {'wip': True}

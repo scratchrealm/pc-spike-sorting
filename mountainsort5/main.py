@@ -52,7 +52,7 @@ class Mountainsort5ProcessorContext(BaseModel):
 class Mountainsort5Processor(ProcessorBase):
     name = 'mountainsort5'
     label = 'MountainSort 5 spike sorter'
-    help = description
+    description = description
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {
         'wip': True
@@ -198,7 +198,7 @@ class MS5QuickTestProcessorContext:
 class MS5QuickTestProcessor(ProcessorBase):
     name = 'ms5_quicktest'
     label = 'MountainSort5 Quick Test'
-    help = description_quicktest
+    description = description_quicktest
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {
         'wip': True

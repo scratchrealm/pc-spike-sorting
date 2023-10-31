@@ -32,7 +32,8 @@
                 {
                     "name": "dandi_api_key",
                     "description": "DANDI API key",
-                    "type": "str"
+                    "type": "str",
+                    "secret": true
                 },
                 {
                     "name": "names",

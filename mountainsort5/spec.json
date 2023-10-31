@@ -31,7 +31,12 @@
                     "name": "scheme",
                     "description": "Which sorting scheme to use: 1, 2, or 3",
                     "type": "int",
-                    "default": 2
+                    "default": 2,
+                    "options": [
+                        1,
+                        2,
+                        3
+                    ]
                 },
                 {
                     "name": "detect_threshold",
@@ -43,7 +48,12 @@
                     "name": "detect_sign",
                     "description": "Use -1 for detecting negative peaks, 1 for positive, 0 for both",
                     "type": "int",
-                    "default": -1
+                    "default": -1,
+                    "options": [
+                        -1,
+                        0,
+                        1
+                    ]
                 },
                 {
                     "name": "detect_time_radius_msec",
@@ -115,7 +125,11 @@
                     "name": "scheme2.scheme2_training_recording_sampling_mode",
                     "description": "initial or uniform",
                     "type": "str",
-                    "default": "uniform"
+                    "default": "uniform",
+                    "options": [
+                        "initial",
+                        "uniform"
+                    ]
                 },
                 {
                     "name": "scheme3_block_duration_sec",

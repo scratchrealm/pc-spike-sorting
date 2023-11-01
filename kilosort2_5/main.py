@@ -64,7 +64,7 @@ class Kilosort2_5Processor(ProcessorBase):
 
         # open the remote file
         print('Opening remote input file')
-        remf = remfile.File(input) # input has a get_url() method which will auto-renew the signed download url if it has expired
+        remf = remfile.File(context.input) # input has a get_url() method which will auto-renew the signed download url if it has expired
         f = h5py.File(remf, 'r')
         print_elapsed_time()
 

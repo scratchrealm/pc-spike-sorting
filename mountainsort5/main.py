@@ -109,10 +109,8 @@ class Mountainsort5Processor(ProcessorBase):
             recording_preprocessed: si.BaseRecording = spre.whiten(
                 recording_scaled,
                 dtype='float32',
-                random_chunk_kwargs=dict(
-                    num_chunks_per_segment=1, # by default this is 20 which takes a long time to load depending on the chunking
-                    chunk_size=1e5
-                )
+                num_chunks_per_segment=1, # by default this is 20 which takes a long time to load depending on the chunking
+                chunk_size=1e5
             )
         else:
             print('Whitening off')

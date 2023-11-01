@@ -209,7 +209,7 @@
                     "name": "test_duration_sec",
                     "description": "Duration of the recording in seconds",
                     "type": "float",
-                    "default": 300
+                    "default": 60
                 }
             ],
             "attributes": [

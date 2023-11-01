@@ -1,48 +1,48 @@
 {
     "name": "dandi_upload",
-    "help": "Upload files to DANDI",
+    "description": "Upload files to DANDI",
     "appImage": "magland/pc-dandi-upload",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
     "processors": [
         {
             "name": "dandi_upload",
-            "help": "\nUpload files to a dandiset on DANDI.\n",
+            "description": "\nUpload files to a dandiset on DANDI.\n",
             "label": "DANDI upload",
             "inputs": [
                 {
                     "name": "inputs",
-                    "help": "List of files to upload",
+                    "description": "List of files to upload",
                     "list": true
                 }
             ],
             "outputs": [],
             "parameters": [
                 {
-                    "name": "dandi_api_key",
-                    "help": "DANDI API key",
-                    "type": "str",
-                    "secret": true
+                    "name": "dandiset_id",
+                    "description": "Dandiset ID",
+                    "type": "str"
                 },
                 {
                     "name": "dandi_instance",
-                    "help": "dandi or dandi-staging",
+                    "description": "dandi or dandi-staging",
                     "type": "str",
                     "default": "dandi"
                 },
                 {
-                    "name": "dandiset_id",
-                    "help": "Dandiset ID",
-                    "type": "str"
+                    "name": "dandi_api_key",
+                    "description": "DANDI API key",
+                    "type": "str",
+                    "secret": true
                 },
                 {
                     "name": "names",
-                    "help": "Destination names in the dandiset",
+                    "description": "Destination names in the dandiset",
                     "type": "List[str]"
                 },
                 {
                     "name": "was_generated_by_jsons",
-                    "help": "The JSON strings containing the wasGeneratedBy metadata for each input file",
+                    "description": "The JSON strings containing the wasGeneratedBy metadata for each input file",
                     "type": "List[str]"
                 }
             ],

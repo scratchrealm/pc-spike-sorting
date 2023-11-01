@@ -3,8 +3,9 @@ FROM python
 RUN mkdir /src
 
 # Install dendro from source, for now
-RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v24" && \
+RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v34" && \
     cd /src/dendro/python && \
+    git checkout pydantic-method && \
     pip install -e .
 
 # Install dandi
@@ -12,4 +13,4 @@ RUN pip install dandi
 
 # Copy files into the container
 RUN mkdir /app
-COPY main.py /app/main
+COPY main.py /app/main.py

@@ -110,7 +110,7 @@ class Mountainsort5Processor(ProcessorBase):
                 recording_scaled,
                 dtype='float32',
                 num_chunks_per_segment=1, # by default this is 20 which takes a long time to load depending on the chunking
-                chunk_size=1e5
+                chunk_size=int(1e5)
             )
         else:
             print('Whitening off')

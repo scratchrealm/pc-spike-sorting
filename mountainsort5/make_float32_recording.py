@@ -14,7 +14,8 @@ def make_float32_recording(recording: si.BaseRecording, *, dirname: str) -> si.B
     si.BinaryRecordingExtractor.write_recording(
         recording=recording,
         file_paths=[fname],
-        dtype='float32'
+        dtype='float32',
+        n_jobs=1 # There may be some issues with parallelization (h5py and remfile, who knows)
     )
     ret = si.BinaryRecordingExtractor(
         file_paths=[fname],

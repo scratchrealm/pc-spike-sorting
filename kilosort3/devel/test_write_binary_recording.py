@@ -39,7 +39,8 @@ def _make_binary_recording(recording: si.BaseRecording) -> si.BinaryRecordingExt
     si.BinaryRecordingExtractor.write_recording(
         recording=recording,
         file_paths=[fname],
-        dtype='int16'
+        dtype='int16',
+        n_jobs=1 # There may be some issues with parallelization (h5py and remfile, who knows)
     )
     ret = si.BinaryRecordingExtractor(
         file_paths=[fname],

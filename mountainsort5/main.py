@@ -200,7 +200,7 @@ class MS5QuickTestProcessorContext(BaseModel):
     input: InputFile = Field(description='Input NWB file')
     output: OutputFile = Field(description='Output NWB file')
     electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    test_duration_sec: float = Field(default=60 * 5, description='Duration of the recording in seconds')
+    test_duration_sec: float = Field(default=60 * 1, description='Duration of the recording in seconds')
 
 class MS5QuickTestProcessor(ProcessorBase):
     name = 'ms5_quicktest'

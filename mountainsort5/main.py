@@ -106,7 +106,14 @@ class Mountainsort5Processor(ProcessorBase):
             print('Whitening on')
             # see comment below in _scale_recording_if_float_type
             recording_scaled = _scale_recording_if_float_type(recording_filtered)
-            recording_preprocessed: si.BaseRecording = spre.whiten(recording_scaled, dtype='float32')
+            recording_preprocessed: si.BaseRecording = spre.whiten(
+                recording_scaled,
+                dtype='float32',
+                random_chunk_kwargs=dict(
+                    num_chunks_per_segment=1, # by default this is 20 which takes a long time to load depending on the chunking
+                    chunk_size=1e5
+                )
+            )
         else:
             print('Whitening off')
             recording_preprocessed = recording_filtered

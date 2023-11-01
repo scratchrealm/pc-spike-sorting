@@ -29,7 +29,8 @@ def make_int16_recording(recording: si.BaseRecording, *, dirname: str) -> si.Bin
         recording=recording,
         file_paths=[fname],
         dtype='int16',
-        n_jobs=1 # There may be some issues with parallelization (h5py and remfile, who knows)
+        n_jobs=1, # There may be some issues with parallelization (h5py and remfile, who knows)
+        chunk_duration='20s', # this defaults to 1s which is inefficient for download
     )
     ret = si.BinaryRecordingExtractor(
         file_paths=[fname],

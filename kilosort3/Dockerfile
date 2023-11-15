@@ -3,7 +3,7 @@ FROM spikeinterface/kilosort3-compiled-base
 RUN mkdir /src
 
 # Install dendro from source, for now
-RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v41" && \
+RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v42" && \
     cd /src/dendro/python && \
     pip install -e .
 

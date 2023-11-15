@@ -220,8 +220,8 @@
         },
         {
             "name": "kilosort3-hamilos-lab",
-            "description": "\nKilosort3 is a spike sorting software package developed by Marius Pachitariu at Janelia Research Campus.\nIt uses a GPU-accelerated algorithm to detect, align, and cluster spikes across many channels.\nBuilding on previous versions, Kilosort3 offers improved efficiency and accuracy in the extraction of neural spike waveforms from multichannel electrophysiological recordings.\nBy leveraging parallel processing capabilities of modern GPUs, it enables sorting with minimal manual intervention.\nThis tool has become an essential part of the workflow many electrophysiology labs.\nFor more information see https://github.com/MouseLand/Kilosort\n",
-            "label": "Kilosort 3",
+            "description": "Kilosort3 Hamilos lab processor",
+            "label": "Kilosort 3 Hamilos lab",
             "inputs": [
                 {
                     "name": "input",
@@ -242,10 +242,133 @@
                     "default": null
                 },
                 {
+                    "name": "detect_threshold",
+                    "description": "",
+                    "type": "float",
+                    "default": 6
+                },
+                {
+                    "name": "projection_threshold",
+                    "description": "",
+                    "type": "List[float]",
+                    "default": [
+                        9,
+                        9
+                    ]
+                },
+                {
+                    "name": "preclust_threshold",
+                    "description": "",
+                    "type": "float",
+                    "default": 8
+                },
+                {
+                    "name": "car",
+                    "description": "",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "minFR",
+                    "description": "",
+                    "type": "float",
+                    "default": 0.2
+                },
+                {
+                    "name": "minfr_goodchannels",
+                    "description": "",
+                    "type": "float",
+                    "default": 0.2
+                },
+                {
+                    "name": "nblocks",
+                    "description": "",
+                    "type": "int",
+                    "default": 5
+                },
+                {
+                    "name": "sig",
+                    "description": "",
+                    "type": "int",
+                    "default": 20
+                },
+                {
+                    "name": "freq_min",
+                    "description": "",
+                    "type": "int",
+                    "default": 300
+                },
+                {
+                    "name": "sigmaMask",
+                    "description": "",
+                    "type": "int",
+                    "default": 30
+                },
+                {
+                    "name": "nPCs",
+                    "description": "",
+                    "type": "int",
+                    "default": 3
+                },
+                {
+                    "name": "ntbuff",
+                    "description": "",
+                    "type": "int",
+                    "default": 64
+                },
+                {
+                    "name": "nfilt_factor",
+                    "description": "",
+                    "type": "int",
+                    "default": 4
+                },
+                {
+                    "name": "do_correction",
+                    "description": "",
+                    "type": "bool",
+                    "default": false
+                },
+                {
+                    "name": "NT",
+                    "description": "",
+                    "type": "int",
+                    "default": -1
+                },
+                {
+                    "name": "AUCsplit",
+                    "description": "",
+                    "type": "float",
+                    "default": 0.8
+                },
+                {
+                    "name": "wave_length",
+                    "description": "",
+                    "type": "int",
+                    "default": 61
+                },
+                {
+                    "name": "keep_good_only",
+                    "description": "",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "skip_kilosort_preprocessing",
+                    "description": "",
+                    "type": "bool",
+                    "default": false
+                },
+                {
+                    "name": "scaleproc",
+                    "description": "",
+                    "type": "int",
+                    "default": -1
+                },
+                {
                     "name": "test_duration_sec",
                     "description": "",
                     "type": "float",
-                    "default": 60
+                    "default": 0
                 }
             ],
             "attributes": [

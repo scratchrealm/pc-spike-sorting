@@ -12,24 +12,25 @@
             "inputs": [
                 {
                     "name": "recording",
-                    "description": "recording .nwb file"
+                    "description": ""
                 },
                 {
                     "name": "sorting",
-                    "description": "sorting .nwb file"
+                    "description": ""
                 }
             ],
             "outputs": [
                 {
                     "name": "output",
-                    "description": "output .figurl file"
+                    "description": ""
                 }
             ],
             "parameters": [
                 {
                     "name": "electrical_series_path",
-                    "description": "Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries",
-                    "type": "str"
+                    "description": "",
+                    "type": "str",
+                    "default": null
                 }
             ],
             "attributes": [

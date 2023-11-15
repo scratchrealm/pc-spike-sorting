@@ -23,10 +23,10 @@ def create_sorting_out_nwb_file(*, nwbfile_rec, sorting, sorting_out_fname):
         keywords=nwbfile_rec.keywords
     )
 
-    for unit_id in sorting.get_unit_ids():
+    for ii, unit_id in enumerate(sorting.get_unit_ids()):
         st = sorting.get_unit_spike_train(unit_id) / sorting.get_sampling_frequency()
         nwbfile.add_unit(
-            id=unit_id,
+            id=ii + 1, # must be an int
             spike_times=st
         )
 

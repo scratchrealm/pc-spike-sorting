@@ -17,19 +17,19 @@ class NwbRecording(si.BaseRecording):
 
         # Get sampling frequency
         if 'starting_time' in electrical_series.keys():
-            t_start = electrical_series['starting_time'][()]
+            # t_start = electrical_series['starting_time'][()]
             sampling_frequency = electrical_series['starting_time'].attrs['rate']
         elif 'timestamps' in electrical_series.keys():
-            t_start = electrical_series['timestamps'][0]
+            # t_start = electrical_series['timestamps'][0]
             sampling_frequency = 1 / np.median(np.diff(electrical_series['timestamps'][:1000]))
-        
+
         # Get channel ids
         electrode_indices = electrical_series['electrodes'][:]
         electrodes_table = file['/general/extracellular_ephys/electrodes']
         channel_ids = [electrodes_table['id'][i] for i in electrode_indices]
-        
+
         si.BaseRecording.__init__(self, channel_ids=channel_ids, sampling_frequency=sampling_frequency, dtype=dtype)
-        
+
         # Set electrode locations
         if 'x' in electrodes_table:
             channel_loc_x = [electrodes_table['x'][i] for i in electrode_indices]
@@ -59,6 +59,18 @@ class NwbRecording(si.BaseRecording):
                     locations[i, 2] = channel_loc_z[electrode_index]
             self.set_dummy_probe_from_locations(locations)
 
+        # Extractors channel groups must be integers, but Nwb electrodes group_name can be strings
+        if "group_name" in electrodes_table:
+            unique_electrode_group_names = list(np.unique(electrodes_table["group_name"][:]))
+            print(unique_electrode_group_names)
+
+            groups = []
+            for electrode_index in electrode_indices:
+                group_name = electrodes_table["group_name"][electrode_index]
+                group_id = unique_electrode_group_names.index(group_name)
+                groups.append(group_id)
+            self.set_channel_groups(groups)
+
         recording_segment = NwbRecordingSegment(
             electrical_series_data=electrical_series_data,
             sampling_frequency=sampling_frequency
@@ -73,7 +85,7 @@ class NwbRecordingSegment(si.BaseRecordingSegment):
     def get_num_samples(self) -> int:
         return self._electrical_series_data.shape[0]
 
-    def get_traces(self, start_frame: int, end_frame: int, channel_indices: Union[List[int], None]=None) -> np.ndarray:
+    def get_traces(self, start_frame: int, end_frame: int, channel_indices: Union[List[int], None] = None) -> np.ndarray:
         if channel_indices is None:
             return self._electrical_series_data[start_frame:end_frame, :]
         else:

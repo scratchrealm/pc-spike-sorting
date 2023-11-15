@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-
+from typing import List
 import os
 from dendro.sdk import ProcessorBase, BaseModel, Field, InputFile, OutputFile
 
@@ -8,12 +7,32 @@ class Kilosort3HamilosLabContext(BaseModel):
     input: InputFile = Field(description='input .nwb file')
     output: OutputFile = Field(description='output .nwb file')
     electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    test_duration_sec: float = Field(default=60, description='For testing purposes: duration of the recording in seconds (0 means all)')
+    detect_threshold: float = Field(default=6, description='Threshold for spike detection')
+    projection_threshold: List[float] = Field(default=[9, 9], description='Threshold on projections')
+    preclust_threshold: float = Field(default=8, description='Threshold crossings for pre-clustering (in PCA projection space)')
+    car: bool = Field(default=True, description='Enable or disable common reference')
+    minFR: float = Field(default=0.2, description='Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed')
+    minfr_goodchannels: float = Field(default=0.2, description='Minimum firing rate on a "good" channel')
+    nblocks: int = Field(default=5, description='blocks for registration. 0 turns it off, 1 does rigid registration. Replaces "datashift" option.')
+    sig: int = Field(default=20, description='spatial smoothness constant for registration')
+    freq_min: int = Field(default=300, description='High-pass filter cutoff frequency')
+    sigmaMask: int = Field(default=30, description='Spatial constant in um for computing residual variance of spike')
+    nPCs: int = Field(default=3, description='Number of PCA dimensions')
+    ntbuff: int = Field(default=64, description='Samples of symmetrical buffer for whitening and spike detection')
+    nfilt_factor: int = Field(default=4, description='Max number of clusters per good channel (even temporary ones) 4')
+    do_correction: bool = Field(default=False, description='If True drift registration is applied')
+    NT: int = Field(default=-1, description='Batch size (if -1 it is automatically computed)')
+    AUCsplit: float = Field(default=0.8, description='Threshold on the area under the curve (AUC) criterion for performing a split in the final step')
+    wave_length: int = Field(default=61, description='size of the waveform extracted around each detected peak, (Default 61, maximum 81)')
+    keep_good_only: bool = Field(default=True, description='If True only "good" units are returned')
+    skip_kilosort_preprocessing: bool = Field(default=False, description='Can optionaly skip the internal kilosort preprocessing')
+    scaleproc: int = Field(default=-1, description='int16 scaling of whitened data, if -1 set to 200.')
+    test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
 
 class Kilosort3HamilosLabProcessor(ProcessorBase):
     name = 'kilosort3-hamilos-lab'
     description = 'Kilosort3 Hamilos lab processor'
-    label = 'Kilosort 3'
+    label = 'Kilosort 3 Hamilos lab'
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {'wip': True}
     @staticmethod
@@ -57,6 +76,29 @@ class Kilosort3HamilosLabProcessor(ProcessorBase):
         unique_channel_groups = sorted(list(set(channel_groups)))
         print(f'Channel groups: {unique_channel_groups}')
 
+        sorting_params = {
+            'detect_threshold': context.detect_threshold,
+            'projection_threshold': context.projection_threshold,
+            'preclust_threshold': context.preclust_threshold,
+            'car': context.car,
+            'minFR': context.minFR,
+            'minfr_goodchannels': context.minfr_goodchannels,
+            'nblocks': context.nblocks,
+            'sig': context.sig,
+            'freq_min': context.freq_min,
+            'sigmaMask': context.sigmaMask,
+            'nPCs': context.nPCs,
+            'ntbuff': context.ntbuff,
+            'nfilt_factor': context.nfilt_factor,
+            'do_correction': context.do_correction,
+            'NT': context.NT if context.NT >= 0 else None,
+            'AUCsplit': context.AUCsplit,
+            'wave_length': context.wave_length,
+            'keep_good_only': context.keep_good_only,
+            'skip_kilosort_preprocessing': context.skip_kilosort_preprocessing,
+            'scaleproc': context.scaleproc if context.scaleproc >= 0 else None
+        }
+
         sortings = []
         for group in unique_channel_groups:
             print(f'Processing group {group}')
@@ -66,11 +108,6 @@ class Kilosort3HamilosLabProcessor(ProcessorBase):
 
             # important to prepare this for kilosort
             recording_group_binary = make_int16_recording(recording_group, dirname=f'/tmp/int16_recording_group_{group}')
-
-            # run kilosort3
-            print('Preparing kilosort3')
-            sorting_params = {
-            }
 
             print(f'Running kilosort3 on group {group}')
             sorting = run_kilosort3(

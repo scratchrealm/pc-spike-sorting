@@ -2,6 +2,7 @@
 
 import os
 from dendro.sdk import App, BaseModel, Field, ProcessorBase, InputFile, OutputFile
+from Mountainsort5HamilosLabProcessor import Mountainsort5HamilosLabProcessor
 
 
 app = App(
@@ -251,6 +252,7 @@ class MS5QuickTestProcessor(ProcessorBase):
 
 app.add_processor(Mountainsort5Processor)
 app.add_processor(MS5QuickTestProcessor)
+app.add_processor(Mountainsort5HamilosLabProcessor)
 
 if __name__ == '__main__':
     app.run()

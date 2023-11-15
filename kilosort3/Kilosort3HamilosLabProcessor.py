@@ -112,7 +112,7 @@ def _combine_sortings(sortings, group_ids):
             if unit_id not in units:
                 uid = f'{group_ids[ii]}-{unit_id}'
                 units[uid] = sorting.get_unit_spike_train(unit_id)
-    _numpy_sorting_from_dict([units], sampling_frequency=sorting0.get_sampling_frequency())
+    return _numpy_sorting_from_dict([units], sampling_frequency=sorting0.get_sampling_frequency())
 
 def _numpy_sorting_from_dict(units_dict_list, *, sampling_frequency):
     import spikeinterface as si

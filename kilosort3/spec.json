@@ -12,30 +12,31 @@
             "inputs": [
                 {
                     "name": "input",
-                    "description": "input .nwb file"
+                    "description": ""
                 }
             ],
             "outputs": [
                 {
                     "name": "output",
-                    "description": "output .nwb file"
+                    "description": ""
                 }
             ],
             "parameters": [
                 {
                     "name": "electrical_series_path",
-                    "description": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
-                    "type": "str"
+                    "description": "",
+                    "type": "str",
+                    "default": null
                 },
                 {
                     "name": "detect_threshold",
-                    "description": "Threshold for spike detection",
+                    "description": "",
                     "type": "float",
                     "default": 6
                 },
                 {
                     "name": "projection_threshold",
-                    "description": "Threshold on projections",
+                    "description": "",
                     "type": "List[float]",
                     "default": [
                         9,
@@ -44,115 +45,115 @@
                 },
                 {
                     "name": "preclust_threshold",
-                    "description": "Threshold crossings for pre-clustering (in PCA projection space)",
+                    "description": "",
                     "type": "float",
                     "default": 8
                 },
                 {
                     "name": "car",
-                    "description": "Enable or disable common reference",
+                    "description": "",
                     "type": "bool",
                     "default": true
                 },
                 {
                     "name": "minFR",
-                    "description": "Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed",
+                    "description": "",
                     "type": "float",
                     "default": 0.2
                 },
                 {
                     "name": "minfr_goodchannels",
-                    "description": "Minimum firing rate on a \"good\" channel",
+                    "description": "",
                     "type": "float",
                     "default": 0.2
                 },
                 {
                     "name": "nblocks",
-                    "description": "blocks for registration. 0 turns it off, 1 does rigid registration. Replaces \"datashift\" option.",
+                    "description": "",
                     "type": "int",
                     "default": 5
                 },
                 {
                     "name": "sig",
-                    "description": "spatial smoothness constant for registration",
+                    "description": "",
                     "type": "int",
                     "default": 20
                 },
                 {
                     "name": "freq_min",
-                    "description": "High-pass filter cutoff frequency",
+                    "description": "",
                     "type": "int",
                     "default": 300
                 },
                 {
                     "name": "sigmaMask",
-                    "description": "Spatial constant in um for computing residual variance of spike",
+                    "description": "",
                     "type": "int",
                     "default": 30
                 },
                 {
                     "name": "nPCs",
-                    "description": "Number of PCA dimensions",
+                    "description": "",
                     "type": "int",
                     "default": 3
                 },
                 {
                     "name": "ntbuff",
-                    "description": "Samples of symmetrical buffer for whitening and spike detection",
+                    "description": "",
                     "type": "int",
                     "default": 64
                 },
                 {
                     "name": "nfilt_factor",
-                    "description": "Max number of clusters per good channel (even temporary ones) 4",
+                    "description": "",
                     "type": "int",
                     "default": 4
                 },
                 {
                     "name": "do_correction",
-                    "description": "If True drift registration is applied",
+                    "description": "",
                     "type": "bool",
                     "default": true
                 },
                 {
                     "name": "NT",
-                    "description": "Batch size (if -1 it is automatically computed)",
+                    "description": "",
                     "type": "int",
                     "default": -1
                 },
                 {
                     "name": "AUCsplit",
-                    "description": "Threshold on the area under the curve (AUC) criterion for performing a split in the final step",
+                    "description": "",
                     "type": "float",
                     "default": 0.8
                 },
                 {
                     "name": "wave_length",
-                    "description": "size of the waveform extracted around each detected peak, (Default 61, maximum 81)",
+                    "description": "",
                     "type": "int",
                     "default": 61
                 },
                 {
                     "name": "keep_good_only",
-                    "description": "If True only \"good\" units are returned",
+                    "description": "",
                     "type": "bool",
                     "default": true
                 },
                 {
                     "name": "skip_kilosort_preprocessing",
-                    "description": "Can optionaly skip the internal kilosort preprocessing",
+                    "description": "",
                     "type": "bool",
                     "default": false
                 },
                 {
                     "name": "scaleproc",
-                    "description": "int16 scaling of whitened data, if -1 set to 200.",
+                    "description": "",
                     "type": "int",
                     "default": -1
                 },
                 {
                     "name": "test_duration_sec",
-                    "description": "For testing purposes: duration of the recording in seconds (0 means all)",
+                    "description": "",
                     "type": "float",
                     "default": 0
                 }
@@ -179,24 +180,70 @@
             "inputs": [
                 {
                     "name": "input",
-                    "description": "input .nwb file"
+                    "description": ""
                 }
             ],
             "outputs": [
                 {
                     "name": "output",
-                    "description": "output .nwb file"
+                    "description": ""
                 }
             ],
             "parameters": [
                 {
                     "name": "electrical_series_path",
-                    "description": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
-                    "type": "str"
+                    "description": "",
+                    "type": "str",
+                    "default": null
                 },
                 {
                     "name": "test_duration_sec",
-                    "description": "For testing purposes: duration of the recording in seconds (0 means all)",
+                    "description": "",
+                    "type": "float",
+                    "default": 60
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorter"
+                }
+            ]
+        },
+        {
+            "name": "kilosort3-hamilos-lab",
+            "description": "\nKilosort3 is a spike sorting software package developed by Marius Pachitariu at Janelia Research Campus.\nIt uses a GPU-accelerated algorithm to detect, align, and cluster spikes across many channels.\nBuilding on previous versions, Kilosort3 offers improved efficiency and accuracy in the extraction of neural spike waveforms from multichannel electrophysiological recordings.\nBy leveraging parallel processing capabilities of modern GPUs, it enables sorting with minimal manual intervention.\nThis tool has become an essential part of the workflow many electrophysiology labs.\nFor more information see https://github.com/MouseLand/Kilosort\n",
+            "label": "Kilosort 3",
+            "inputs": [
+                {
+                    "name": "input",
+                    "description": ""
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": ""
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "description": "",
+                    "type": "str",
+                    "default": null
+                },
+                {
+                    "name": "test_duration_sec",
+                    "description": "",
                     "type": "float",
                     "default": 60
                 }

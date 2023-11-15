@@ -112,7 +112,18 @@ def _combine_sortings(sortings, group_ids):
             if unit_id not in units:
                 uid = f'{group_ids[ii]}-{unit_id}'
                 units[uid] = sorting.get_unit_spike_train(unit_id)
-    return si.NumpySorting.from_dict(
-        units,
-        sampling_frequency=sorting0.get_sampling_frequency()
-    )
+    _numpy_sorting_from_dict([units], sampling_frequency=sorting0.get_sampling_frequency())
+
+def _numpy_sorting_from_dict(units_dict_list, *, sampling_frequency):
+    import spikeinterface as si
+    try:
+        # different versions of spikeinterface
+        # see: https://github.com/SpikeInterface/spikeinterface/issues/2083
+        sorting = si.NumpySorting.from_dict( # type: ignore
+            units_dict_list, sampling_frequency=sampling_frequency
+        )
+    except: # noqa
+        sorting = si.NumpySorting.from_unit_dict( # type: ignore
+            units_dict_list, sampling_frequency=sampling_frequency
+        )
+    return sorting

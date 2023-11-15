@@ -83,7 +83,7 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
             recording_filtered = recording
 
         print('Creating binary recording')
-        recording_binary = make_float32_recording(recording_filtered, dirname='/tmp/int16_recording')
+        recording_binary = make_float32_recording(recording_filtered, dirname='/tmp/float32_recording')
         print_elapsed_time()
 
         channel_groups = recording.get_channel_groups() # get this from recording, not recording_binary
@@ -111,6 +111,8 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
             else:
                 print('Whitening off')
                 recording_group_preprocessed = recording_group
+            
+            recording_group_preprocessed = make_float32_recording(recording_group_preprocessed, dirname=f'/tmp/preprocessed_recording_group_{group}')
 
             print('Setting up sorting parameters')
             scheme1_sorting_parameters = ms5.Scheme1SortingParameters(

@@ -219,9 +219,9 @@
             ]
         },
         {
-            "name": "kilosort3-hamilos-lab",
-            "description": "Kilosort3 Hamilos lab processor",
-            "label": "Kilosort 3 Hamilos lab",
+            "name": "kilosort3-hamiloslab",
+            "description": "Kilosort3 Hamilos Lab processor",
+            "label": "Kilosort 3 Hamilos Lab",
             "inputs": [
                 {
                     "name": "input",

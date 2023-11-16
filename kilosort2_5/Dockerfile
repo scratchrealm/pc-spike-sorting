@@ -9,7 +9,7 @@ RUN pip install pynwb
 RUN pip install spikeinterface==0.99.1
 
 # Install dendro
-RUN pip install dendro==0.1.10
+RUN pip install dendro==0.1.11
 
 # Copy files into the container
 RUN mkdir /app

@@ -156,6 +156,12 @@
                     "description": "",
                     "type": "float",
                     "default": 0
+                },
+                {
+                    "name": "lazy_read_input",
+                    "description": "",
+                    "type": "bool",
+                    "default": true
                 }
             ],
             "attributes": [
@@ -219,9 +225,9 @@
             ]
         },
         {
-            "name": "kilosort2_5-hamilos-lab",
-            "description": "Kilosort2_5 Hamilos lab processor",
-            "label": "Kilosort 2.5 Hamilos lab",
+            "name": "kilosort2_5-hamiloslab",
+            "description": "Kilosort2_5 Hamilos Lab processor",
+            "label": "Kilosort 2.5 Hamilos Lab",
             "inputs": [
                 {
                     "name": "input",

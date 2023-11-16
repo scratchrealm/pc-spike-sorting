@@ -1,6 +1,6 @@
 import os
 from dendro.sdk import ProcessorBase
-from .models import Kilosort2_5HamilosLabContext
+from models import Kilosort2_5HamilosLabContext
 
 
 class Kilosort2_5HamilosLabProcessor(ProcessorBase):

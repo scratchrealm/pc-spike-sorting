@@ -27,7 +27,7 @@ class Kilsort2_5Context(BaseModel):
     skip_kilosort_preprocessing: bool = Field(default=False, description="Can optionaly skip the internal kilosort preprocessing")
     scaleproc: int = Field(default=-1, description="int16 scaling of whitened data, if -1 set to 200.")
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
-    test_use_fsspec: bool = Field(default=False, description='For testing purposes: use fsspec rather than remfile to read the input file')
+    lazy_read_input: bool = Field(default=True, description='If True (default and recommended) the input is read lazily, otherwise the entire nwb file is downloaded upfront.')
 
 class Kilsort2_5QuicktestContext(BaseModel):
     input: InputFile = Field(description='input .nwb file')

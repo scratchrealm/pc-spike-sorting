@@ -2,7 +2,7 @@
 
 import os
 from dendro.sdk import App, ProcessorBase
-from .models import Kilsort2_5Context, Kilsort2_5QuicktestContext
+from models import Kilsort2_5Context, Kilsort2_5QuicktestContext
 from Kilosort2_5HamilosLabProcessor import Kilosort2_5HamilosLabProcessor
 
 
@@ -38,7 +38,8 @@ class Kilosort2_5Processor(ProcessorBase):
 
         # open the remote file
         print('Opening remote input file')
-        f = h5py.File(context.input.get_file(), 'r')
+        download = not context.lazy_read_input
+        f = h5py.File(context.input.get_file(download=download), 'r')
         print_elapsed_time()
 
         print('Creating input recording')

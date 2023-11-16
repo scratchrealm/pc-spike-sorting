@@ -1,33 +1,7 @@
-from typing import List
 import os
-from dendro.sdk import ProcessorBase, BaseModel, Field, InputFile, OutputFile
+from dendro.sdk import ProcessorBase
+from models import Kilosort3HamilosLabContext
 
-
-class Kilosort3HamilosLabContext(BaseModel):
-    input: InputFile = Field(description='input .nwb file')
-    output: OutputFile = Field(description='output .nwb file')
-    electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    detect_threshold: float = Field(default=6, description='Threshold for spike detection')
-    projection_threshold: List[float] = Field(default=[9, 9], description='Threshold on projections')
-    preclust_threshold: float = Field(default=8, description='Threshold crossings for pre-clustering (in PCA projection space)')
-    car: bool = Field(default=True, description='Enable or disable common reference')
-    minFR: float = Field(default=0.2, description='Minimum spike rate (Hz), if a cluster falls below this for too long it gets removed')
-    minfr_goodchannels: float = Field(default=0.2, description='Minimum firing rate on a "good" channel')
-    nblocks: int = Field(default=5, description='blocks for registration. 0 turns it off, 1 does rigid registration. Replaces "datashift" option.')
-    sig: int = Field(default=20, description='spatial smoothness constant for registration')
-    freq_min: int = Field(default=300, description='High-pass filter cutoff frequency')
-    sigmaMask: int = Field(default=30, description='Spatial constant in um for computing residual variance of spike')
-    nPCs: int = Field(default=3, description='Number of PCA dimensions')
-    ntbuff: int = Field(default=64, description='Samples of symmetrical buffer for whitening and spike detection')
-    nfilt_factor: int = Field(default=4, description='Max number of clusters per good channel (even temporary ones) 4')
-    do_correction: bool = Field(default=False, description='If True drift registration is applied')
-    NT: int = Field(default=-1, description='Batch size (if -1 it is automatically computed)')
-    AUCsplit: float = Field(default=0.8, description='Threshold on the area under the curve (AUC) criterion for performing a split in the final step')
-    wave_length: int = Field(default=61, description='size of the waveform extracted around each detected peak, (Default 61, maximum 81)')
-    keep_good_only: bool = Field(default=True, description='If True only "good" units are returned')
-    skip_kilosort_preprocessing: bool = Field(default=False, description='Can optionaly skip the internal kilosort preprocessing')
-    scaleproc: int = Field(default=-1, description='int16 scaling of whitened data, if -1 set to 200.')
-    test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
 
 class Kilosort3HamilosLabProcessor(ProcessorBase):
     name = 'kilosort3-hamiloslab'
@@ -38,21 +12,19 @@ class Kilosort3HamilosLabProcessor(ProcessorBase):
     @staticmethod
     def run(context: Kilosort3HamilosLabContext):
         import h5py
-        import remfile
         import pynwb
-        from NwbRecording import NwbRecording
-        from create_sorting_out_nwb_file import create_sorting_out_nwb_file
+        from common.NwbRecording import NwbRecording
+        from common.create_sorting_out_nwb_file import create_sorting_out_nwb_file
         from run_kilosort3 import run_kilosort3
-        from make_int16_recording import make_int16_recording
-        from print_elapsed_time import print_elapsed_time, start_timer
+        from common.make_int16_recording import make_int16_recording
+        from common.print_elapsed_time import print_elapsed_time, start_timer
 
-        print('Starting kilosort3 Hamilos lab processor')
+        print('Starting kilosort3 Hamilos Lab processor')
         start_timer()
 
         # open the remote file
         print('Opening remote input file')
-        remf = remfile.File(context.input) # input has a get_url() method which will auto-renew the signed download url if it has expired
-        f = h5py.File(remf, 'r')
+        f = h5py.File(context.input.get_file(), 'r')
         print_elapsed_time()
 
         print('Creating input recording')

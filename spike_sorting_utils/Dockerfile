@@ -2,25 +2,20 @@ FROM python
 
 RUN mkdir /src
 
-# Install dendro from source, for now
-RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v40" && \
-    cd /src/dendro/python && \
-    pip install -e .
-
 # Install pynwb
 RUN pip install pynwb
 
 # Install spikeinterface
-RUN pip install spikeinterface
+RUN pip install spikeinterface==0.99.1
 
 # Install sortingview
-RUN pip install sortingview
+RUN pip install sortingview==0.12.0
 
-# Upgrade remfile
-RUN pip install --upgrade remfile
+# Install dendro
+RUN pip install dendro==0.1.10
 
 # Copy files into the container
 RUN mkdir /app
-COPY helpers /app/helpers
-COPY *.py /app/
-COPY main.py /app/main.py
+COPY spike_sorting_utils/*.py /app/
+COPY spike_sorting_utils/helpers /app/helpers
+COPY spike_sorting_utils/common /app/common

@@ -12,7 +12,6 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
     @staticmethod
     def run(context: Mountainsort5ProcessorContext):
         import h5py
-        import remfile
         import pynwb
         import mountainsort5 as ms5
         import spikeinterface as si
@@ -28,8 +27,7 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
 
         # open the remote file
         print('Opening remote input file')
-        remf = remfile.File(context.input) # input has a get_url() method which will auto-renew the signed download url if it has expired
-        f = h5py.File(remf, 'r')
+        f = h5py.File(context.input.get_file(), 'r')
         print_elapsed_time()
 
         print('Creating input recording')

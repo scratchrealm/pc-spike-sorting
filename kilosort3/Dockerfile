@@ -2,21 +2,16 @@ FROM spikeinterface/kilosort3-compiled-base
 
 RUN mkdir /src
 
-# Install dendro from source, for now
-RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro && echo "v42" && \
-    cd /src/dendro/python && \
-    pip install -e .
-
 # Install pynwb
 RUN pip install pynwb
 
 # Install spikeinterface
-RUN pip install spikeinterface
+RUN pip install spikeinterface==0.99.1
 
-# Upgrade remfile
-RUN pip install --upgrade remfile
+# Install dendro
+RUN pip install dendro==0.1.10
 
 # Copy files into the container
 RUN mkdir /app
-COPY *.py /app/
-COPY main.py /app/main.py
+COPY kilosort3/*.py /app/
+COPY kilosort3/common /app/common

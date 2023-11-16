@@ -32,7 +32,6 @@ class Mountainsort5Processor(ProcessorBase):
     def run(context: Mountainsort5ProcessorContext):
         import h5py
         import spikeinterface as si
-        import remfile
         import pynwb
         from common.NwbRecording import NwbRecording
         from common.create_sorting_out_nwb_file import create_sorting_out_nwb_file
@@ -50,8 +49,7 @@ class Mountainsort5Processor(ProcessorBase):
 
         # open the remote file
         print('Opening remote input file')
-        remf = remfile.File(input) # input has a get_url() method which will auto-renew the signed download url if it has expired
-        f = h5py.File(remf, 'r')
+        f = h5py.File(context.input.get_file(), 'r')
         print_elapsed_time()
 
         print('Creating input recording')

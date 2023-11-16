@@ -32,6 +32,7 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
     def run(context: SpikeSortingFigurlContext):
         import h5py
         import remfile
+        # from common.NwbRecording import NwbRecording
         from NwbSorting import NwbSorting
         import sortingview.views as vv
         from helpers.compute_correlogram_data import compute_correlogram_data

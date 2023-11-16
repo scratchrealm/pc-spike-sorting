@@ -4,7 +4,6 @@ import spikeinterface as si
 
 
 def make_float32_recording(recording: si.BaseRecording, *, dirname: str) -> si.BinaryRecordingExtractor:
-    print('--- make_float32_recording')
     if os.path.exists(dirname):
         shutil.rmtree(dirname)
     os.mkdir(dirname)

@@ -216,9 +216,9 @@
             ]
         },
         {
-            "name": "mountainsort5-hamilos-lab",
-            "description": "Mountainsort5 Hamilos lab processor",
-            "label": "MountainSort 5 Hamilos lab",
+            "name": "mountainsort5-hamiloslab",
+            "description": "Mountainsort5 Hamilos Lab processor",
+            "label": "MountainSort 5 Hamilos Lab",
             "inputs": [
                 {
                     "name": "input",

@@ -18,5 +18,5 @@ RUN pip install --upgrade remfile
 
 # Copy files into the container
 RUN mkdir /app
-COPY *.py /app/
-COPY main.py /app/main.py
+COPY mountainsort5/*.py /app/
+COPY mountainsort5/common /app/common

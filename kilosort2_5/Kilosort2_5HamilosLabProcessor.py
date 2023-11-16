@@ -30,9 +30,9 @@ class Kilosort2_5HamilosLabContext(BaseModel):
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
 
 class Kilosort2_5HamilosLabProcessor(ProcessorBase):
-    name = 'kilosort2_5-hamilos-lab'
-    description = 'Kilosort2_5 Hamilos lab processor'
-    label = 'Kilosort 2.5 Hamilos lab'
+    name = 'kilosort2_5-hamiloslab'
+    description = 'Kilosort2_5 Hamilos Lab processor'
+    label = 'Kilosort 2.5 Hamilos Lab'
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {'wip': True}
     @staticmethod

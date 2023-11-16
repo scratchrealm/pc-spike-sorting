@@ -1,0 +1,5 @@
+[codespell]
+skip = .git,*.pdf,*.svg,.codespellrc,*.json
+check-hidden = true
+# ignore-regex = 
+ignore-words-list = sortings

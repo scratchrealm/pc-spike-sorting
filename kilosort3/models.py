@@ -24,7 +24,7 @@ class Kilosort3Context(BaseModel):
     AUCsplit: float = Field(default=0.8, description='Threshold on the area under the curve (AUC) criterion for performing a split in the final step')
     wave_length: int = Field(default=61, description='size of the waveform extracted around each detected peak, (Default 61, maximum 81)')
     keep_good_only: bool = Field(default=True, description='If True only "good" units are returned')
-    skip_kilosort_preprocessing: bool = Field(default=False, description='Can optionaly skip the internal kilosort preprocessing')
+    skip_kilosort_preprocessing: bool = Field(default=False, description='Can optionally skip the internal kilosort preprocessing')
     scaleproc: int = Field(default=-1, description='int16 scaling of whitened data, if -1 set to 200.')
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
 
@@ -56,6 +56,6 @@ class Kilosort3HamilosLabContext(BaseModel):
     AUCsplit: float = Field(default=0.8, description='Threshold on the area under the curve (AUC) criterion for performing a split in the final step')
     wave_length: int = Field(default=61, description='size of the waveform extracted around each detected peak, (Default 61, maximum 81)')
     keep_good_only: bool = Field(default=True, description='If True only "good" units are returned')
-    skip_kilosort_preprocessing: bool = Field(default=False, description='Can optionaly skip the internal kilosort preprocessing')
+    skip_kilosort_preprocessing: bool = Field(default=False, description='Can optionally skip the internal kilosort preprocessing')
     scaleproc: int = Field(default=-1, description='int16 scaling of whitened data, if -1 set to 200.')
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')

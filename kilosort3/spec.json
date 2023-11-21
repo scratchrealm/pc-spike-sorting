@@ -1,7 +1,7 @@
 {
     "name": "kilosort3",
     "description": "Kilosort3 spike sorting",
-    "appImage": "magland/pc-kilosort3",
+    "appImage": "ghcr.io/scratchrealm/pc-kilosort3:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
     "processors": [

@@ -1,7 +1,7 @@
 {
     "name": "dandi_upload",
     "description": "Upload files to DANDI",
-    "appImage": "magland/pc-dandi-upload",
+    "appImage": "ghcr.io/scratchrealm/pc-dandi_upload:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
     "processors": [

@@ -1,7 +1,7 @@
 {
     "name": "mountainsort5",
     "description": "MountainSort5 spike sorting",
-    "appImage": "magland/pc-mountainsort5",
+    "appImage": "ghcr.io/scratchrealm/pc-mountainsort5:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
     "processors": [

@@ -1,7 +1,7 @@
 {
     "name": "spike_sorting_utils",
     "description": "Utilities for working with spike sorting data",
-    "appImage": "magland/pc-spike-sorting-utils",
+    "appImage": "ghcr.io/scratchrealm/pc-spike_sorting_utils:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
     "processors": [

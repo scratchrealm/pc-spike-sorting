@@ -22,6 +22,7 @@ class SpikeSortingFigurlContext(BaseModel):
     output: OutputFile = Field(description='output .figurl file')
     electrical_series_path: str = Field(description='Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries')
 
+
 class SpikeSortingFigurlProcessor(ProcessorBase):
     name = 'spike_sorting_figurl'
     description = description
@@ -91,7 +92,9 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
         print('Uploading output file')
         context.output.set(output_fname)
 
+
 app.add_processor(SpikeSortingFigurlProcessor)
+
 
 if __name__ == '__main__':
     app.run()

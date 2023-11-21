@@ -28,6 +28,6 @@ jobs:
         run: |
           docker buildx build --push \
           -t ghcr.io/scratchrealm/dendro-spike-sorting-utils:latest \
-          --cache-to type=registry,ref=ghcr.io/scratchrealm/dendro-spike-sorting-utils:build-cache,mode=max \
-          --cache-from type=registry,ref=ghcr.io/scratchrealm/dendro-spike-sorting-utils:build-cache \
+          --cache-to type=inline \
+          --cache-from type=registry,ref=ghcr.io/scratchrealm/dendro-spike-sorting-utils:latest \
           -f ./spike_sorting_utils/Dockerfile .

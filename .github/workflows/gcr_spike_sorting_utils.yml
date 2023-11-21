@@ -1,0 +1,30 @@
+name: Build spike_sorting_utils image and push to GCR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "spike_sorting_utils/**"
+      - "common/**"
+  workflow_dispatch:
+
+jobs:
+  publish-docker-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Docker image
+        run: |
+          docker build --tag ghcr.io/scratchrealm/dendro-spike-sorting-utils:latest -f ./spike_sorting_utils/Dockerfile .
+          docker push ghcr.io/scratchrealm/dendro-spike-sorting-utils:latest

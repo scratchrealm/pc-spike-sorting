@@ -30,10 +30,9 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
     attributes = {'wip': True}
     @staticmethod
     def run(context: SpikeSortingFigurlContext):
-        import h5py
         import remfile
         # from common.NwbRecording import NwbRecording
-        from NwbSorting import NwbSorting
+        from common.NwbSorting import NwbSorting
         import sortingview.views as vv
         from helpers.compute_correlogram_data import compute_correlogram_data
 
@@ -58,8 +57,7 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
 
         print('Opening remote input sorting file')
         sorting_remf = remfile.File(sorting_nwb_url)
-        sorting_f = h5py.File(sorting_remf, 'r')
-        nwb_sorting = NwbSorting(file=sorting_f)
+        nwb_sorting = NwbSorting(sorting_remf)
 
         # freq_min = 300
         # freq_max = 6000

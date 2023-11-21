@@ -11,7 +11,7 @@ from dendro.sdk import App, ProcessorBase, BaseModel, Field, InputFile
 app = App(
     'dandi_upload',
     description="Upload files to DANDI",
-    app_image="magland/pc-dandi-upload",
+    app_image="ghcr.io/scratchrealm/pc-dandi_upload:latest",
     app_executable="/app/main.py"
 )
 

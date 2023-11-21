@@ -8,7 +8,7 @@ from dendro.sdk import App, ProcessorBase, BaseModel, Field, InputFile, OutputFi
 app = App(
     'spike_sorting_utils',
     description="Utilities for working with spike sorting data",
-    app_image="magland/pc-spike-sorting-utils",
+    app_image="ghcr.io/scratchrealm/pc-spike_sorting_utils:latest",
     app_executable="/app/main.py"
 )
 

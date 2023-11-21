@@ -9,7 +9,7 @@ from models import Mountainsort5PreprocessingParameters, Mountainsort5Scheme2Sor
 app = App(
     'mountainsort5',
     description="MountainSort5 spike sorting",
-    app_image="magland/pc-mountainsort5",
+    app_image="ghcr.io/scratchrealm/pc-mountainsort5:latest",
     app_executable="/app/main.py"
 )
 
@@ -49,7 +49,7 @@ class Mountainsort5Processor(ProcessorBase):
 
         # open the remote file
         print('Opening remote input file')
-        f = h5py.File(context.input.get_file(), 'r')
+        f = h5py.File(input.get_file(), 'r')
         print_elapsed_time()
 
         print('Creating input recording')

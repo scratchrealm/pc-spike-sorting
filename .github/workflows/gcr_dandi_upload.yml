@@ -1,11 +1,11 @@
-name: Build spike_sorting_utils image and push to GCR
+name: Build dandi_upload image and push to GCR
 
 on:
   push:
     branches:
       - main
     paths:
-      - "spike_sorting_utils/**"
+      - "dandi_upload/**"
       - "common/**"
   workflow_dispatch:
 
@@ -26,7 +26,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          NAME="spike_sorting_utils" \
+          NAME="dandi_upload" \
           docker buildx build --push \
           -t ghcr.io/scratchrealm/pc-$NAME:latest \
           --cache-to type=inline \

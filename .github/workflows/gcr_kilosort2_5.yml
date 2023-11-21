@@ -1,11 +1,11 @@
-name: Build spike_sorting_utils image and push to GCR
+name: Build kilosort2_5 image and push to GCR
 
 on:
   push:
     branches:
       - main
     paths:
-      - "spike_sorting_utils/**"
+      - "kilosort2_5/**"
       - "common/**"
   workflow_dispatch:
 
@@ -26,7 +26,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          NAME="spike_sorting_utils" \
+          NAME="kilosort2_5" \
           docker buildx build --push \
           -t ghcr.io/scratchrealm/pc-$NAME:latest \
           --cache-to type=inline \

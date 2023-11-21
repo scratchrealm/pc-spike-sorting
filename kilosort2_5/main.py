@@ -9,7 +9,7 @@ from Kilosort2_5HamilosLabProcessor import Kilosort2_5HamilosLabProcessor
 app = App(
     'kilosort2_5',
     description="Kilosort2_5 spike sorting",
-    app_image="magland/pc-kilosort2_5",
+    app_image="ghcr.io/scratchrealm/pc-kilosort2_5:latest",
     app_executable="/app/main.py"
 )
 

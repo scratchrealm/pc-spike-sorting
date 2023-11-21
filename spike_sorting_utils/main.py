@@ -90,7 +90,7 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
             f.write(output_url)
 
         print('Uploading output file')
-        context.output.set(output_fname)
+        context.output.upload(output_fname)
 
 
 app.add_processor(SpikeSortingFigurlProcessor)

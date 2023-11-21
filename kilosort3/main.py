@@ -109,7 +109,7 @@ class Kilosort3Processor(ProcessorBase):
         print_elapsed_time()
 
         print('Uploading output NWB file')
-        context.output.set(sorting_out_fname)
+        context.output.upload(sorting_out_fname)
         print_elapsed_time()
 
 description_quicktest = """

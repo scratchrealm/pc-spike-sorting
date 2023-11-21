@@ -154,7 +154,7 @@ class Mountainsort5Processor(ProcessorBase):
         print_elapsed_time()
 
         print('Uploading output NWB file')
-        output.set(sorting_out_fname)
+        output.upload(sorting_out_fname)
         print_elapsed_time()
 
 

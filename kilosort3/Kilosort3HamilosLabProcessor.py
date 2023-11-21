@@ -107,7 +107,7 @@ class Kilosort3HamilosLabProcessor(ProcessorBase):
         print_elapsed_time()
 
         print('Uploading output NWB file')
-        context.output.set(sorting_out_fname)
+        context.output.upload(sorting_out_fname)
         print_elapsed_time()
 
 def _combine_sortings(sortings, group_ids):

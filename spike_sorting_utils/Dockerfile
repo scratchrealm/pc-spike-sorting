@@ -14,6 +14,9 @@ RUN pip install sortingview==0.12.0
 # Install dendro
 RUN pip install dendro==0.1.13
 
+# Get the latest version (needed to add this line during development)
+RUN pip install --upgrade kachery-cloud
+
 # Copy files into the container
 RUN mkdir /app
 COPY spike_sorting_utils/*.py /app/

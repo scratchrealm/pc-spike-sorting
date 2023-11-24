@@ -4,6 +4,7 @@
     "appImage": "ghcr.io/scratchrealm/pc-kilosort2_5:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
+    "requiresGpu": true,
     "processors": [
         {
             "name": "kilosort2_5",

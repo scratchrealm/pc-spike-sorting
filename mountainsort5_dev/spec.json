@@ -4,6 +4,7 @@
     "appImage": "ghcr.io/scratchrealm/pc-mountainsort5_dev:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
+    "requiresGpu": false,
     "processors": [
         {
             "name": "mountainsort5-dev",

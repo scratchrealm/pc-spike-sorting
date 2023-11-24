@@ -44,7 +44,7 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
             recording_filtered = recording
 
         print('Creating binary recording')
-        recording_binary = make_float32_recording(recording_filtered, dirname='/tmp/float32_recording')
+        recording_binary = make_float32_recording(recording_filtered, dirname='float32_recording')
         print_elapsed_time()
 
         channel_groups = recording.get_channel_groups() # get this from recording, not recording_binary
@@ -73,7 +73,7 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
                 print('Whitening off')
                 recording_group_preprocessed = recording_group
 
-            recording_group_preprocessed = make_float32_recording(recording_group_preprocessed, dirname=f'/tmp/preprocessed_recording_group_{group}')
+            recording_group_preprocessed = make_float32_recording(recording_group_preprocessed, dirname=f'preprocessed_recording_group_{group}')
 
             print('Setting up sorting parameters')
             scheme1_sorting_parameters = ms5.Scheme1SortingParameters(
@@ -164,11 +164,11 @@ def _numpy_sorting_from_dict(units_dict_list, *, sampling_frequency):
     try:
         # different versions of spikeinterface
         # see: https://github.com/SpikeInterface/spikeinterface/issues/2083
-        sorting = si.NumpySorting.from_dict( # type: ignore
-            units_dict_list, sampling_frequency=sampling_frequency
+        sorting = si.NumpySorting.from_dict(
+            units_dict_list, sampling_frequency=sampling_frequency # type: ignore
         )
     except: # noqa
-        sorting = si.NumpySorting.from_unit_dict( # type: ignore
-            units_dict_list, sampling_frequency=sampling_frequency
+        sorting = si.NumpySorting.from_unit_dict(
+            units_dict_list, sampling_frequency=sampling_frequency # type: ignore
         )
     return sorting

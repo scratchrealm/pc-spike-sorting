@@ -56,7 +56,7 @@ class Kilosort3Processor(ProcessorBase):
         # it's important that it's a single segment with int16 dtype
         # during this step, the entire recording will be downloaded to disk
         print('Creating binary recording')
-        recording_binary = make_int16_recording(recording, dirname='/tmp/int16_recording')
+        recording_binary = make_int16_recording(recording, dirname='int16_recording')
         print_elapsed_time()
 
         # run kilosort3
@@ -88,7 +88,7 @@ class Kilosort3Processor(ProcessorBase):
         sorting = run_kilosort3(
             recording=recording_binary,
             sorting_params=sorting_params,
-            output_folder='/tmp/sorting_output'
+            output_folder='sorting_output'
         )
         print_elapsed_time()
 

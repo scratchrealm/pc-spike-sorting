@@ -34,11 +34,11 @@ def _numpy_sorting_from_dict(units_dict_list, *, sampling_frequency):
     try:
         # different versions of spikeinterface
         # see: https://github.com/SpikeInterface/spikeinterface/issues/2083
-        sorting = si.NumpySorting.from_dict( # type: ignore
-            units_dict_list, sampling_frequency=sampling_frequency
+        sorting = si.NumpySorting.from_dict(
+            units_dict_list, sampling_frequency=sampling_frequency # type: ignore
         )
     except: # noqa
-        sorting = si.NumpySorting.from_unit_dict( # type: ignore
-            units_dict_list, sampling_frequency=sampling_frequency
+        sorting = si.NumpySorting.from_unit_dict(
+            units_dict_list, sampling_frequency=sampling_frequency # type: ignore
         )
     return sorting

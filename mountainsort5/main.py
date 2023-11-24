@@ -85,7 +85,7 @@ class Mountainsort5Processor(ProcessorBase):
         # Probably lazy loading in a smart way would be in order for scheme 3
         # at some point in the future.
         print('Creating binary recording')
-        recording_binary = make_float32_recording(recording_preprocessed, dirname='/tmp/preprocessed_recording')
+        recording_binary = make_float32_recording(recording_preprocessed, dirname='preprocessed_recording')
         print_elapsed_time()
 
         print('Setting up sorting parameters')

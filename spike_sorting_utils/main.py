@@ -46,7 +46,7 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
         # open the remote file
         print('Opening remote input recording file')
         # Use a disk cache because we are going to be doing random access
-        # disk_cache = remfile.DiskCache('/tmp/remfile_cache')
+        # disk_cache = remfile.DiskCache('remfile_cache')
         # recording_remf = remfile.File(recording_nwb_url, disk_cache=disk_cache)
 
         # print('Creating input recording')

@@ -2,7 +2,7 @@
 
 import os
 from dendro.sdk import App, ProcessorBase
-from models import Mountainsort5PreprocessingParameters, Mountainsort5Scheme2SortingParameters, Mountainsort5ProcessorContext, MS5QuickTestProcessorContext
+from models import Mountainsort5ProcessorContext
 
 
 app = App(
@@ -84,7 +84,7 @@ class Mountainsort5DevProcessor(ProcessorBase):
         # Probably lazy loading in a smart way would be in order for scheme 3
         # at some point in the future.
         print('Creating binary recording')
-        recording_binary = make_float32_recording(recording_preprocessed, dirname='/tmp/preprocessed_recording')
+        recording_binary = make_float32_recording(recording_preprocessed, dirname='preprocessed_recording')
         print_elapsed_time()
 
         print('Setting up sorting parameters')

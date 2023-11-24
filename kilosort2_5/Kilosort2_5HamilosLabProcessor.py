@@ -36,7 +36,7 @@ class Kilosort2_5HamilosLabProcessor(ProcessorBase):
         # it's important that it's a single segment with int16 dtype
         # during this step, the entire recording will be downloaded to disk
         print('Creating binary recording')
-        recording_binary = make_int16_recording(recording, dirname='/tmp/int16_recording')
+        recording_binary = make_int16_recording(recording, dirname='int16_recording')
         print_elapsed_time()
 
         channel_groups = recording.get_channel_groups() # get this from recording, not recording_binary
@@ -74,13 +74,13 @@ class Kilosort2_5HamilosLabProcessor(ProcessorBase):
             recording_group = recording_binary.channel_slice(channel_ids=channel_ids_in_group)
 
             # important to prepare this for kilosort
-            recording_group_binary = make_int16_recording(recording_group, dirname=f'/tmp/int16_recording_group_{group}')
+            recording_group_binary = make_int16_recording(recording_group, dirname=f'/int16_recording_group_{group}')
 
             print(f'Running kilosort 2.5 on group {group}')
             sorting = run_kilosort2_5(
                 recording=recording_group_binary,
                 sorting_params=sorting_params,
-                output_folder=f'/tmp/sorting_output_group_{group}'
+                output_folder=f'sorting_output_group_{group}'
             )
             print_elapsed_time()
 
@@ -124,11 +124,11 @@ def _numpy_sorting_from_dict(units_dict_list, *, sampling_frequency):
     try:
         # different versions of spikeinterface
         # see: https://github.com/SpikeInterface/spikeinterface/issues/2083
-        sorting = si.NumpySorting.from_dict( # type: ignore
-            units_dict_list, sampling_frequency=sampling_frequency
+        sorting = si.NumpySorting.from_dict(
+            units_dict_list, sampling_frequency=sampling_frequency # type: ignore
         )
     except: # noqa
-        sorting = si.NumpySorting.from_unit_dict( # type: ignore
-            units_dict_list, sampling_frequency=sampling_frequency
+        sorting = si.NumpySorting.from_unit_dict(
+            units_dict_list, sampling_frequency=sampling_frequency # type: ignore
         )
     return sorting

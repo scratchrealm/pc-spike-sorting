@@ -1,4 +1,4 @@
-name: Build mountainsort5 image and push to GCR
+name: Build mountainsort5_dev image and push to GCR
 
 on:
   push:

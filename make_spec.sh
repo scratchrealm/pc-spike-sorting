@@ -16,3 +16,6 @@ dendro make-app-spec-file --app-dir mountainsort5 --spec-output-file mountainsor
 
 # spike_sorting_utils
 dendro make-app-spec-file --app-dir spike_sorting_utils --spec-output-file spike_sorting_utils/spec.json
+
+# mountainsort5_dev
+dendro make-app-spec-file --app-dir mountainsort5_dev --spec-output-file mountainsort5_dev/spec.json

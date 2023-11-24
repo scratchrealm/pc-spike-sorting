@@ -1,0 +1,174 @@
+{
+    "name": "mountainsort5_dev",
+    "description": "MountainSort5 dev spike sorting",
+    "appImage": "ghcr.io/scratchrealm/pc-mountainsort5_dev:latest",
+    "appExecutable": "/app/main.py",
+    "executable": "/app/main.py",
+    "processors": [
+        {
+            "name": "mountainsort5-dev",
+            "description": "\nMountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.\nBy employing Isosplit, a non-parametric density-based clustering approach, the software minimizes the need for manual intervention, thereby reducing errors and inconsistencies.\nSee https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.1016/j.neuron.2017.08.030\n",
+            "label": "MountainSort 5 spike sorter",
+            "inputs": [
+                {
+                    "name": "input",
+                    "description": ""
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": ""
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "electrical_series_path",
+                    "description": "",
+                    "type": "str",
+                    "default": null
+                },
+                {
+                    "name": "scheme",
+                    "description": "",
+                    "type": "int",
+                    "default": 2
+                },
+                {
+                    "name": "detect_threshold",
+                    "description": "",
+                    "type": "float",
+                    "default": 5.5
+                },
+                {
+                    "name": "detect_sign",
+                    "description": "",
+                    "type": "int",
+                    "default": -1
+                },
+                {
+                    "name": "detect_time_radius_msec",
+                    "description": "",
+                    "type": "float",
+                    "default": 0.5
+                },
+                {
+                    "name": "snippet_T1",
+                    "description": "",
+                    "type": "int",
+                    "default": 20
+                },
+                {
+                    "name": "snippet_T2",
+                    "description": "",
+                    "type": "int",
+                    "default": 20
+                },
+                {
+                    "name": "npca_per_channel",
+                    "description": "",
+                    "type": "int",
+                    "default": 3
+                },
+                {
+                    "name": "npca_per_subdivision",
+                    "description": "",
+                    "type": "int",
+                    "default": 10
+                },
+                {
+                    "name": "snippet_mask_radius",
+                    "description": "",
+                    "type": "int",
+                    "default": 250
+                },
+                {
+                    "name": "scheme1_detect_channel_radius",
+                    "description": "",
+                    "type": "int",
+                    "default": 150
+                },
+                {
+                    "name": "scheme2.scheme2_phase1_detect_channel_radius",
+                    "description": "",
+                    "type": "int",
+                    "default": 200
+                },
+                {
+                    "name": "scheme2.scheme2_detect_channel_radius",
+                    "description": "",
+                    "type": "int",
+                    "default": 50
+                },
+                {
+                    "name": "scheme2.scheme2_max_num_snippets_per_training_batch",
+                    "description": "",
+                    "type": "int",
+                    "default": 200
+                },
+                {
+                    "name": "scheme2.scheme2_training_duration_sec",
+                    "description": "",
+                    "type": "int",
+                    "default": 300
+                },
+                {
+                    "name": "scheme2.scheme2_training_recording_sampling_mode",
+                    "description": "",
+                    "type": "str",
+                    "default": "uniform"
+                },
+                {
+                    "name": "scheme3_block_duration_sec",
+                    "description": "",
+                    "type": "int",
+                    "default": 1800
+                },
+                {
+                    "name": "preprocessing.freq_min",
+                    "description": "",
+                    "type": "int",
+                    "default": 300
+                },
+                {
+                    "name": "preprocessing.freq_max",
+                    "description": "",
+                    "type": "int",
+                    "default": 6000
+                },
+                {
+                    "name": "preprocessing.filter",
+                    "description": "",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "preprocessing.whiten",
+                    "description": "",
+                    "type": "bool",
+                    "default": true
+                },
+                {
+                    "name": "test_duration_sec",
+                    "description": "",
+                    "type": "float",
+                    "default": 0
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "wip",
+                    "value": true
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorter"
+                }
+            ]
+        }
+    ]
+}

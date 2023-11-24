@@ -22,14 +22,9 @@ class Kilosort2_5HamilosLabProcessor(ProcessorBase):
         print('Starting kilosort 2.5 Hamilos lab processor')
         start_timer()
 
-        # open the remote file
-        print('Opening remote input file')
-        f = h5py.File(context.input.get_file(), 'r')
-        print_elapsed_time()
-
         print('Creating input recording')
         recording = NwbRecording(
-            file=f,
+            file=context.input.get_file(),
             electrical_series_path=context.electrical_series_path
         )
         print_elapsed_time()
@@ -96,7 +91,8 @@ class Kilosort2_5HamilosLabProcessor(ProcessorBase):
         print_elapsed_time()
 
         print('Writing output NWB file')
-        with pynwb.NWBHDF5IO(file=f, mode='r', load_namespaces=True) as io:
+        h5_file = h5py.File(context.input.get_file(), 'r')
+        with pynwb.NWBHDF5IO(file=h5_file, mode='r', load_namespaces=True) as io:
             nwbfile_rec = io.read()
 
             if not os.path.exists('output'):

@@ -48,11 +48,10 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
         # Use a disk cache because we are going to be doing random access
         # disk_cache = remfile.DiskCache('/tmp/remfile_cache')
         # recording_remf = remfile.File(recording_nwb_url, disk_cache=disk_cache)
-        # recording_f = h5py.File(recording_remf, 'r')
 
         # print('Creating input recording')
         # nwb_recording = NwbRecording(
-        #     file=recording_f,
+        #     file=recording_remf,
         #     electrical_series_path=context.electrical_series_path
         # )
 

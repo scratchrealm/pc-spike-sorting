@@ -8,10 +8,12 @@ import spikeinterface as si
 
 class NwbRecording(si.BaseRecording):
     def __init__(self,
-        file: h5py.File,
+        file, # file-like object
         electrical_series_path: str
     ) -> None:
-        electrical_series: h5py.Group = file[electrical_series_path]
+        h5_file = h5py.File(file, 'r')
+
+        electrical_series: h5py.Group = h5_file[electrical_series_path]
         electrical_series_data = electrical_series['data']
         dtype = electrical_series_data.dtype
 
@@ -25,24 +27,24 @@ class NwbRecording(si.BaseRecording):
 
         # Get channel ids
         electrode_indices = electrical_series['electrodes'][:]
-        electrodes_table = file['/general/extracellular_ephys/electrodes']
+        electrodes_table = h5_file['/general/extracellular_ephys/electrodes']
         channel_ids = [electrodes_table['id'][i] for i in electrode_indices]
 
         si.BaseRecording.__init__(self, channel_ids=channel_ids, sampling_frequency=sampling_frequency, dtype=dtype)
 
         # Set electrode locations
-        if 'x' in electrodes_table:
-            channel_loc_x = [electrodes_table['x'][i] for i in electrode_indices]
-            channel_loc_y = [electrodes_table['y'][i] for i in electrode_indices]
-            if 'z' in electrodes_table:
-                channel_loc_z = [electrodes_table['z'][i] for i in electrode_indices]
-            else:
-                channel_loc_z = None
-        elif 'rel_x' in electrodes_table:
+        if 'rel_x' in electrodes_table:
             channel_loc_x = [electrodes_table['rel_x'][i] for i in electrode_indices]
             channel_loc_y = [electrodes_table['rel_y'][i] for i in electrode_indices]
             if 'rel_z' in electrodes_table:
                 channel_loc_z = [electrodes_table['rel_z'][i] for i in electrode_indices]
+            else:
+                channel_loc_z = None
+        elif 'x' in electrodes_table:
+            channel_loc_x = [electrodes_table['x'][i] for i in electrode_indices]
+            channel_loc_y = [electrodes_table['y'][i] for i in electrode_indices]
+            if 'z' in electrodes_table:
+                channel_loc_z = [electrodes_table['z'][i] for i in electrode_indices]
             else:
                 channel_loc_z = None
         else:

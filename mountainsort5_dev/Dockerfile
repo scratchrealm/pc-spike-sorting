@@ -11,15 +11,8 @@ RUN pip install spikeinterface==0.99.1
 # Install mountainsort5
 RUN pip install mountainsort5==0.3.3
 
-# Install dendro dev
-RUN git clone https://github.com/flatironinstitute/dendro /src/dendro && \
-    cd /src/dendro/python && \
-    git checkout iaac-batch-jfm && \
-    pip install -e . \
-    echo "v2"
-
-# # Install dendro
-# RUN pip install dendro==0.1.10
+# Install dendro
+RUN pip install dendro==0.1.14.dev.1
 
 # Copy files into the container
 RUN mkdir /app

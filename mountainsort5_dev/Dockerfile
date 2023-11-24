@@ -16,7 +16,7 @@ RUN git clone https://github.com/flatironinstitute/dendro /src/dendro && \
     cd /src/dendro/python && \
     git checkout iaac-batch-jfm && \
     pip install -e . \
-    echo "v1"
+    echo "v2"
 
 # # Install dendro
 # RUN pip install dendro==0.1.10

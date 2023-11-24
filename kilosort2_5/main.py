@@ -10,7 +10,8 @@ app = App(
     'kilosort2_5',
     description="Kilosort2_5 spike sorting",
     app_image="ghcr.io/scratchrealm/pc-kilosort2_5:latest",
-    app_executable="/app/main.py"
+    app_executable="/app/main.py",
+    requires_gpu=True
 )
 
 description = """

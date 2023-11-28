@@ -12,7 +12,7 @@ RUN pip install spikeinterface==0.99.1
 RUN pip install sortingview==0.12.0
 
 # Install dendro
-RUN pip install dendro==0.1.14.dev.2
+RUN pip install dendro==0.1.14.dev.3
 
 # Get the latest version (needed to add this line during development)
 RUN pip install --upgrade kachery-cloud

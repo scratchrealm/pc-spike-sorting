@@ -8,6 +8,9 @@ RUN pip install pynwb
 # Install spikeinterface
 RUN pip install spikeinterface==0.99.1
 
+# For monitoring GPU
+RUN pip install GPUtil
+
 # Install dendro
 RUN pip install dendro==0.1.14.dev.3
 

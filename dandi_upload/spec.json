@@ -4,7 +4,6 @@
     "appImage": "ghcr.io/scratchrealm/pc-dandi_upload:latest",
     "appExecutable": "/app/main.py",
     "executable": "/app/main.py",
-    "requiresGpu": false,
     "processors": [
         {
             "name": "dandi_upload",

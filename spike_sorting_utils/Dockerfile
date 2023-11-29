@@ -12,7 +12,7 @@ RUN pip install spikeinterface==0.99.1
 RUN pip install sortingview==0.12.0
 
 # Install dendro
-RUN pip install dendro==0.1.14
+RUN pip install dendro==0.1.15.dev.1
 
 # Copy files into the container
 RUN mkdir /app

@@ -22,7 +22,8 @@ class Mountainsort5DevProcessor(ProcessorBase):
     name = 'mountainsort5-dev'
     label = 'MountainSort 5 spike sorter'
     description = description
-    tags = ['spike_sorting', 'spike_sorter']
+    # important tags for the frontend: 'spike_sorter' and 'mountainsort5'
+    tags = ['spike_sorting', 'spike_sorter', 'mountainsort5']
     attributes = {
         'wip': True
     }

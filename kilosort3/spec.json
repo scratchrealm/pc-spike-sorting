@@ -171,6 +171,9 @@
                 },
                 {
                     "tag": "spike_sorter"
+                },
+                {
+                    "tag": "kilosort3"
                 }
             ]
         },
@@ -339,6 +342,9 @@
                 },
                 {
                     "tag": "spike_sorter"
+                },
+                {
+                    "tag": "kilosort3"
                 }
             ]
         }

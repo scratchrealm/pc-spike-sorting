@@ -7,7 +7,8 @@ class Kilosort3HamilosLabProcessor(ProcessorBase):
     name = 'kilosort3-hamiloslab'
     description = 'Kilosort3 Hamilos Lab processor'
     label = 'Kilosort 3 Hamilos Lab'
-    tags = ['spike_sorting', 'spike_sorter']
+    # important tags for the frontend: 'spike_sorter' and 'kilosort3'
+    tags = ['spike_sorting', 'spike_sorter', 'kilosort3']
     attributes = {'wip': True}
     @staticmethod
     def run(context: Kilosort3HamilosLabContext):

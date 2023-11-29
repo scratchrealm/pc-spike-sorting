@@ -59,6 +59,9 @@
             "tags": [
                 {
                     "tag": "dandi"
+                },
+                {
+                    "tag": "dandi_upload"
                 }
             ]
         }

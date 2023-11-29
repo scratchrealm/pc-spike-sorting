@@ -31,7 +31,7 @@ class DandiUploadProcessor(ProcessorBase):
     name = 'dandi_upload'
     description = description
     label = 'DANDI upload'
-    tags = ['dandi']
+    tags = ['dandi', 'dandi_upload']
     attributes = {'wip': True}
     @staticmethod
     def run(context: DandiUploadContext):

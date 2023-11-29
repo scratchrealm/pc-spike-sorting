@@ -43,6 +43,9 @@
             "tags": [
                 {
                     "tag": "spike_sorting"
+                },
+                {
+                    "tag": "spike_sorting_figurl"
                 }
             ]
         }

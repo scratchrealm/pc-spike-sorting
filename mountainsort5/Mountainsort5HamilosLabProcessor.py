@@ -7,7 +7,8 @@ class Mountainsort5HamilosLabProcessor(ProcessorBase):
     name = 'mountainsort5-hamiloslab'
     description = 'Mountainsort5 Hamilos Lab processor'
     label = 'MountainSort 5 Hamilos Lab'
-    tags = ['spike_sorting', 'spike_sorter']
+    # important tags for the frontend: 'spike_sorter' and 'mountainsort5'
+    tags = ['spike_sorting', 'spike_sorter', 'mountainsort5']
     attributes = {'wip': True}
     @staticmethod
     def run(context: Mountainsort5ProcessorContext):

@@ -27,7 +27,7 @@ class SpikeSortingFigurlProcessor(ProcessorBase):
     name = 'spike_sorting_figurl'
     description = description
     label = 'Spike sorting figurl'
-    tags = ['spike_sorting']
+    tags = ['spike_sorting', 'spike_sorting_figurl']
     attributes = {'wip': True}
     @staticmethod
     def run(context: SpikeSortingFigurlContext):

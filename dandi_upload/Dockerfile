@@ -6,7 +6,7 @@ RUN mkdir /src
 RUN pip install dandi==0.58.0
 
 # Install dendro
-RUN pip install dendro==0.1.15.dev.2
+RUN pip install dendro==0.1.15.dev2
 
 # Copy files into the container
 RUN mkdir /app

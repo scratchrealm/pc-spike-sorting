@@ -13,7 +13,7 @@
             "inputs": [
                 {
                     "name": "inputs",
-                    "description": "",
+                    "description": "List of files to upload",
                     "list": true
                 }
             ],
@@ -21,31 +21,31 @@
             "parameters": [
                 {
                     "name": "dandiset_id",
-                    "description": "",
+                    "description": "Dandiset ID",
                     "type": "str",
                     "default": null
                 },
                 {
                     "name": "dandi_instance",
-                    "description": "",
+                    "description": "dandi or dandi-staging",
                     "type": "str",
                     "default": "dandi"
                 },
                 {
                     "name": "dandi_api_key",
-                    "description": "",
+                    "description": "DANDI API key",
                     "type": "str",
                     "default": null
                 },
                 {
                     "name": "names",
-                    "description": "",
+                    "description": "Destination names in the dandiset",
                     "type": "List[str]",
                     "default": null
                 },
                 {
                     "name": "was_generated_by_jsons",
-                    "description": "",
+                    "description": "The JSON strings containing the wasGeneratedBy metadata for each input file",
                     "type": "List[str]",
                     "default": null
                 }

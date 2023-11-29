@@ -8,150 +8,150 @@
     "processors": [
         {
             "name": "mountainsort5-dev",
-            "description": "\nMountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.\nBy employing Isosplit, a non-parametric density-based clustering approach, the software minimizes the need for manual intervention, thereby reducing errors and inconsistencies.\nSee https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.1016/j.neuron.2017.08.030\n",
+            "description": "\nMountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at the Loren Frank lab.\n",
             "label": "MountainSort 5 spike sorter",
             "inputs": [
                 {
                     "name": "input",
-                    "description": ""
+                    "description": "Input NWB file"
                 }
             ],
             "outputs": [
                 {
                     "name": "output",
-                    "description": ""
+                    "description": "Output NWB file"
                 }
             ],
             "parameters": [
                 {
                     "name": "electrical_series_path",
-                    "description": "",
+                    "description": "Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries",
                     "type": "str",
                     "default": null
                 },
                 {
                     "name": "scheme",
-                    "description": "",
+                    "description": "Which sorting scheme to use: 1, 2, or 3",
                     "type": "int",
                     "default": 2
                 },
                 {
                     "name": "detect_threshold",
-                    "description": "",
+                    "description": "Detection threshold - recommend to use the default",
                     "type": "float",
                     "default": 5.5
                 },
                 {
                     "name": "detect_sign",
-                    "description": "",
+                    "description": "Use -1 for detecting negative peaks, 1 for positive, 0 for both",
                     "type": "int",
                     "default": -1
                 },
                 {
                     "name": "detect_time_radius_msec",
-                    "description": "",
+                    "description": "Determines the minimum allowable time interval between detected spikes in the same spatial region",
                     "type": "float",
                     "default": 0.5
                 },
                 {
                     "name": "snippet_T1",
-                    "description": "",
+                    "description": "Number of samples before the peak to include in the snippet",
                     "type": "int",
                     "default": 20
                 },
                 {
                     "name": "snippet_T2",
-                    "description": "",
+                    "description": "Number of samples after the peak to include in the snippet",
                     "type": "int",
                     "default": 20
                 },
                 {
                     "name": "npca_per_channel",
-                    "description": "",
+                    "description": "Number of PCA features per channel in the initial dimension reduction step",
                     "type": "int",
                     "default": 3
                 },
                 {
                     "name": "npca_per_subdivision",
-                    "description": "",
+                    "description": "Number of PCA features to compute at each stage of clustering in the isosplit6 subdivision method",
                     "type": "int",
                     "default": 10
                 },
                 {
                     "name": "snippet_mask_radius",
-                    "description": "",
+                    "description": "Radius of the mask to apply to the extracted snippets",
                     "type": "int",
                     "default": 250
                 },
                 {
                     "name": "scheme1_detect_channel_radius",
-                    "description": "",
+                    "description": "Channel radius for excluding events that are too close in time in scheme 1",
                     "type": "int",
                     "default": 150
                 },
                 {
                     "name": "scheme2.scheme2_phase1_detect_channel_radius",
-                    "description": "",
+                    "description": "Channel radius for excluding events that are too close in time during phase 1 of scheme 2",
                     "type": "int",
                     "default": 200
                 },
                 {
                     "name": "scheme2.scheme2_detect_channel_radius",
-                    "description": "",
+                    "description": "Channel radius for excluding events that are too close in time during phase 2 of scheme 2",
                     "type": "int",
                     "default": 50
                 },
                 {
                     "name": "scheme2.scheme2_max_num_snippets_per_training_batch",
-                    "description": "",
+                    "description": "Maximum number of snippets to use in each batch for training during phase 2 of scheme 2",
                     "type": "int",
                     "default": 200
                 },
                 {
                     "name": "scheme2.scheme2_training_duration_sec",
-                    "description": "",
+                    "description": "Duration of training data to use in scheme 2",
                     "type": "int",
                     "default": 300
                 },
                 {
                     "name": "scheme2.scheme2_training_recording_sampling_mode",
-                    "description": "",
+                    "description": "initial or uniform",
                     "type": "str",
                     "default": "uniform"
                 },
                 {
                     "name": "scheme3_block_duration_sec",
-                    "description": "",
+                    "description": "Duration of each block in scheme 3",
                     "type": "int",
                     "default": 1800
                 },
                 {
                     "name": "preprocessing.freq_min",
-                    "description": "",
+                    "description": "High-pass filter cutoff frequency",
                     "type": "int",
                     "default": 300
                 },
                 {
                     "name": "preprocessing.freq_max",
-                    "description": "",
+                    "description": "Low-pass filter cutoff frequency",
                     "type": "int",
                     "default": 6000
                 },
                 {
                     "name": "preprocessing.filter",
-                    "description": "",
+                    "description": "Enable or disable filter",
                     "type": "bool",
                     "default": true
                 },
                 {
                     "name": "preprocessing.whiten",
-                    "description": "",
+                    "description": "Enable or disable whiten",
                     "type": "bool",
                     "default": true
                 },
                 {
                     "name": "test_duration_sec",
-                    "description": "",
+                    "description": "For testing purposes: duration of the recording in seconds (0 means all)",
                     "type": "float",
                     "default": 0
                 }

@@ -16,11 +16,6 @@ app = App(
 
 description = """
 Kilosort3 is a spike sorting software package developed by Marius Pachitariu at Janelia Research Campus.
-It uses a GPU-accelerated algorithm to detect, align, and cluster spikes across many channels.
-Building on previous versions, Kilosort3 offers improved efficiency and accuracy in the extraction of neural spike waveforms from multichannel electrophysiological recordings.
-By leveraging parallel processing capabilities of modern GPUs, it enables sorting with minimal manual intervention.
-This tool has become an essential part of the workflow many electrophysiology labs.
-For more information see https://github.com/MouseLand/Kilosort
 """
 
 class Kilosort3Processor(ProcessorBase):

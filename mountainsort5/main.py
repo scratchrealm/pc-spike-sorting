@@ -3,7 +3,7 @@
 import os
 from dendro.sdk import App, ProcessorBase
 from Mountainsort5HamilosLabProcessor import Mountainsort5HamilosLabProcessor
-from models import Mountainsort5PreprocessingParameters, Mountainsort5Scheme2SortingParameters, Mountainsort5ProcessorContext
+from models import Mountainsort5ProcessorContext
 
 
 app = App(
@@ -14,9 +14,7 @@ app = App(
 )
 
 description = """
-MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at Loren Frank's lab.
-By employing Isosplit, a non-parametric density-based clustering approach, the software minimizes the need for manual intervention, thereby reducing errors and inconsistencies.
-See https://github.com/flatironinstitute/mountainsort5 and https://doi.org/10.1016/j.neuron.2017.08.030
+MountainSort is a CPU-based spike sorting software package developed by Jeremy Magland and others at Flatiron Institute in collaboration with researchers at the Loren Frank lab.
 """
 
 class Mountainsort5Processor(ProcessorBase):

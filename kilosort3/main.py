@@ -2,7 +2,7 @@
 
 import os
 from dendro.sdk import App, ProcessorBase
-from models import Kilosort3Context, Kilosort3QuicktestContext
+from models import Kilosort3Context
 
 from Kilosort3HamilosLabProcessor import Kilosort3HamilosLabProcessor
 
@@ -108,49 +108,7 @@ class Kilosort3Processor(ProcessorBase):
         context.output.upload(sorting_out_fname)
         print_elapsed_time()
 
-description_quicktest = """
-For running tests. Runs Kilosort 3 with default parameters on the first portion of the recording.
-"""
-
-class Kilosort3QuicktestProcessor(ProcessorBase):
-    name = 'ks3_quicktest'
-    description = description_quicktest
-    label = 'Kilosort 3 Quick Test'
-    tags = ['spike_sorting', 'spike_sorter']
-    attributes = {'wip': True}
-    @staticmethod
-    def run(context: Kilosort3QuicktestContext):
-        Kilosort3Processor.run(
-            Kilosort3Context(
-                input=context.input,
-                output=context.output,
-                electrical_series_path=context.electrical_series_path,
-                detect_threshold=6,
-                projection_threshold=[9, 9],
-                preclust_threshold=8,
-                car=True,
-                minFR=0.2,
-                minfr_goodchannels=0.2,
-                nblocks=5,
-                sig=20,
-                freq_min=300,
-                sigmaMask=30,
-                nPCs=3,
-                ntbuff=64,
-                nfilt_factor=4,
-                do_correction=True,
-                NT=-1,
-                AUCsplit=0.8,
-                wave_length=61,
-                keep_good_only=True,
-                skip_kilosort_preprocessing=False,
-                scaleproc=-1,
-                test_duration_sec=context.test_duration_sec
-            )
-        )
-
 app.add_processor(Kilosort3Processor)
-app.add_processor(Kilosort3QuicktestProcessor)
 app.add_processor(Kilosort3HamilosLabProcessor)
 
 if __name__ == '__main__':

@@ -172,51 +172,6 @@
             ]
         },
         {
-            "name": "ms5_quicktest",
-            "description": "\nFor running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.\n",
-            "label": "MountainSort5 Quick Test",
-            "inputs": [
-                {
-                    "name": "input",
-                    "description": ""
-                }
-            ],
-            "outputs": [
-                {
-                    "name": "output",
-                    "description": ""
-                }
-            ],
-            "parameters": [
-                {
-                    "name": "electrical_series_path",
-                    "description": "",
-                    "type": "str",
-                    "default": null
-                },
-                {
-                    "name": "test_duration_sec",
-                    "description": "",
-                    "type": "float",
-                    "default": 60
-                }
-            ],
-            "attributes": [
-                {
-                    "name": "wip",
-                    "value": true
-                }
-            ],
-            "tags": [
-                {
-                    "tag": "spike_sorting"
-                },
-                {
-                    "tag": "spike_sorter"
-                }
-            ]
-        },
-        {
             "name": "mountainsort5-hamiloslab",
             "description": "Mountainsort5 Hamilos Lab processor",
             "label": "MountainSort 5 Hamilos Lab",

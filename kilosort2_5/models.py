@@ -2,7 +2,7 @@ from typing import List
 from dendro.sdk import BaseModel, Field, InputFile, OutputFile
 
 
-class Kilsort2_5Context(BaseModel):
+class Kilosort2_5Context(BaseModel):
     input: InputFile = Field(description='input .nwb file')
     output: OutputFile = Field(description='output .nwb file')
     electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
@@ -28,12 +28,6 @@ class Kilsort2_5Context(BaseModel):
     scaleproc: int = Field(default=-1, description="int16 scaling of whitened data, if -1 set to 200.")
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
     lazy_read_input: bool = Field(default=True, description='If True (default and recommended) the input is read lazily, otherwise the entire nwb file is downloaded upfront.')
-
-class Kilsort2_5QuicktestContext(BaseModel):
-    input: InputFile = Field(description='input .nwb file')
-    output: OutputFile = Field(description='output .nwb file')
-    electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    test_duration_sec: float = Field(default=60, description='For testing purposes: duration of the recording in seconds (0 means all)')
 
 class Kilosort2_5HamilosLabContext(BaseModel):
     input: InputFile = Field(description='input .nwb file')

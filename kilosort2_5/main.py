@@ -2,7 +2,7 @@
 
 import os
 from dendro.sdk import App, ProcessorBase
-from models import Kilsort2_5Context, Kilsort2_5QuicktestContext
+from models import Kilosort2_5Context
 from Kilosort2_5HamilosLabProcessor import Kilosort2_5HamilosLabProcessor
 
 
@@ -25,7 +25,7 @@ class Kilosort2_5Processor(ProcessorBase):
     tags = ['spike_sorting', 'spike_sorter']
     attributes = {'wip': True}
     @staticmethod
-    def run(context: Kilsort2_5Context):
+    def run(context: Kilosort2_5Context):
         import h5py
         import pynwb
         from common.NwbRecording import NwbRecording
@@ -110,49 +110,7 @@ class Kilosort2_5Processor(ProcessorBase):
         context.output.upload(sorting_out_fname)
         print_elapsed_time()
 
-description_quicktest = """
-For running tests. Runs Kilosort 2.5 with default parameters on the first portion of the recording.
-"""
-
-class Kilosort2_5QuicktestProcessor(ProcessorBase):
-    name = 'ks2_5_quicktest'
-    description = description_quicktest
-    label = 'Kilosort 2.5 Quick Test'
-    tags = ['spike_sorting', 'spike_sorter']
-    attributes = {'wip': True}
-    @staticmethod
-    def run(context: Kilsort2_5QuicktestContext):
-        Kilosort2_5Processor.run(
-            Kilsort2_5Context(
-                input=context.input,
-                output=context.output,
-                electrical_series_path=context.electrical_series_path,
-                detect_threshold=6,
-                projection_threshold=[10, 4],
-                preclust_threshold=8,
-                car=True,
-                minFR=0.1,
-                minfr_goodchannels=0.1,
-                nblocks=5,
-                sig=20,
-                freq_min=150,
-                sigmaMask=30,
-                nPCs=3,
-                ntbuff=64,
-                nfilt_factor=4,
-                NT=-1,
-                AUCsplit=0.9,
-                do_correction=True,
-                wave_length=61,
-                keep_good_only=True,
-                skip_kilosort_preprocessing=False,
-                scaleproc=-1,
-                test_duration_sec=context.test_duration_sec
-            )
-        )
-
 app.add_processor(Kilosort2_5Processor)
-app.add_processor(Kilosort2_5QuicktestProcessor)
 app.add_processor(Kilosort2_5HamilosLabProcessor)
 
 if __name__ == '__main__':

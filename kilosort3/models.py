@@ -28,12 +28,6 @@ class Kilosort3Context(BaseModel):
     scaleproc: int = Field(default=-1, description='int16 scaling of whitened data, if -1 set to 200.')
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
 
-class Kilosort3QuicktestContext(BaseModel):
-    input: InputFile = Field(description='input .nwb file')
-    output: OutputFile = Field(description='output .nwb file')
-    electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    test_duration_sec: float = Field(default=60, description='For testing purposes: duration of the recording in seconds (0 means all)')
-
 class Kilosort3HamilosLabContext(BaseModel):
     input: InputFile = Field(description='input .nwb file')
     output: OutputFile = Field(description='output .nwb file')

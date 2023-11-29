@@ -175,51 +175,6 @@
             ]
         },
         {
-            "name": "ks3_quicktest",
-            "description": "\nFor running tests. Runs Kilosort 3 with default parameters on the first portion of the recording.\n",
-            "label": "Kilosort 3 Quick Test",
-            "inputs": [
-                {
-                    "name": "input",
-                    "description": ""
-                }
-            ],
-            "outputs": [
-                {
-                    "name": "output",
-                    "description": ""
-                }
-            ],
-            "parameters": [
-                {
-                    "name": "electrical_series_path",
-                    "description": "",
-                    "type": "str",
-                    "default": null
-                },
-                {
-                    "name": "test_duration_sec",
-                    "description": "",
-                    "type": "float",
-                    "default": 60
-                }
-            ],
-            "attributes": [
-                {
-                    "name": "wip",
-                    "value": true
-                }
-            ],
-            "tags": [
-                {
-                    "tag": "spike_sorting"
-                },
-                {
-                    "tag": "spike_sorter"
-                }
-            ]
-        },
-        {
             "name": "kilosort3-hamiloslab",
             "description": "Kilosort3 Hamilos Lab processor",
             "label": "Kilosort 3 Hamilos Lab",

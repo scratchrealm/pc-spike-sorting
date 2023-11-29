@@ -3,7 +3,7 @@
 import os
 from dendro.sdk import App, ProcessorBase
 from Mountainsort5HamilosLabProcessor import Mountainsort5HamilosLabProcessor
-from models import Mountainsort5PreprocessingParameters, Mountainsort5Scheme2SortingParameters, Mountainsort5ProcessorContext, MS5QuickTestProcessorContext
+from models import Mountainsort5PreprocessingParameters, Mountainsort5Scheme2SortingParameters, Mountainsort5ProcessorContext
 
 
 app = App(
@@ -153,62 +153,7 @@ class Mountainsort5Processor(ProcessorBase):
         output.upload(sorting_out_fname)
         print_elapsed_time()
 
-
-description_quicktest = """
-For running tests. Runs MountainSort5 scheme 1 with default parameters on the first portion of the recording.
-"""
-
-class MS5QuickTestProcessor(ProcessorBase):
-    name = 'ms5_quicktest'
-    label = 'MountainSort5 Quick Test'
-    description = description_quicktest
-    tags = ['spike_sorting', 'spike_sorter']
-    attributes = {
-        'wip': True
-    }
-
-    @staticmethod
-    def run(context: MS5QuickTestProcessorContext):
-        input = context.input
-        output = context.output
-        electrical_series_path = context.electrical_series_path
-        test_duration_sec = context.test_duration_sec
-
-        context0 = Mountainsort5ProcessorContext(
-            input=input,
-            output=output,
-            electrical_series_path=electrical_series_path,
-            scheme=1,
-            detect_threshold=5.5,
-            detect_sign=-1,
-            detect_time_radius_msec=0.5,
-            snippet_T1=20,
-            snippet_T2=20,
-            npca_per_channel=3,
-            npca_per_subdivision=10,
-            snippet_mask_radius=250,
-            scheme1_detect_channel_radius=150,
-            scheme2=Mountainsort5Scheme2SortingParameters(
-                scheme2_phase1_detect_channel_radius=200,
-                scheme2_detect_channel_radius=50,
-                scheme2_max_num_snippets_per_training_batch=200,
-                scheme2_training_duration_sec=60 * 5,
-                scheme2_training_recording_sampling_mode='uniform'
-            ),
-            scheme3_block_duration_sec=60 * 30,
-            preprocessing=Mountainsort5PreprocessingParameters(
-                freq_min=300,
-                freq_max=6000,
-                filter=True,
-                whiten=True
-            ),
-            test_duration_sec=test_duration_sec
-        )
-
-        Mountainsort5Processor.run(context0)
-
 app.add_processor(Mountainsort5Processor)
-app.add_processor(MS5QuickTestProcessor)
 app.add_processor(Mountainsort5HamilosLabProcessor)
 
 if __name__ == '__main__':

@@ -32,9 +32,3 @@ class Mountainsort5ProcessorContext(BaseModel):
     scheme3_block_duration_sec: int = Field(default=60 * 30, description='Duration of each block in scheme 3') # indicate somehow that this is active only if scheme == 3
     preprocessing: Mountainsort5PreprocessingParameters = Field(description='Preprocessing parameters')
     test_duration_sec: float = Field(default=0, description='For testing purposes: duration of the recording in seconds (0 means all)')
-
-class MS5QuickTestProcessorContext(BaseModel):
-    input: InputFile = Field(description='Input NWB file')
-    output: OutputFile = Field(description='Output NWB file')
-    electrical_series_path: str = Field(description='Path to the electrical series in the NWB file, e.g., /acquisition/ElectricalSeries')
-    test_duration_sec: float = Field(default=60 * 1, description='Duration of the recording in seconds')

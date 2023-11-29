@@ -12,7 +12,7 @@ RUN pip install spikeinterface==0.99.1
 RUN pip install GPUtil
 
 # Install dendro
-RUN pip install dendro==0.1.14.dev.3
+RUN pip install dendro==0.1.14
 
 # Copy files into the container
 RUN mkdir /app

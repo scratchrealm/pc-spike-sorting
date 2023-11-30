@@ -29,7 +29,7 @@ class Kilosort2_5Processor(ProcessorBase):
         import h5py
         # import pynwb
         from common.NwbRecording import NwbRecording
-        from common.create_sorting_out_nwb_file_v2 import create_sorting_out_nwb_file_v2
+        from create_sorting_out_nwb_file_v2 import create_sorting_out_nwb_file_v2
         from run_kilosort2_5 import run_kilosort2_5
         from common.make_int16_recording import make_int16_recording
         from common.print_elapsed_time import print_elapsed_time, start_timer

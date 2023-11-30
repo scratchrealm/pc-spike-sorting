@@ -27,9 +27,9 @@ class Kilosort2_5Processor(ProcessorBase):
     @staticmethod
     def run(context: Kilosort2_5Context):
         import h5py
-        import pynwb
+        # import pynwb
         from common.NwbRecording import NwbRecording
-        from common.create_sorting_out_nwb_file import create_sorting_out_nwb_file
+        from common.create_sorting_out_nwb_file_v2 import create_sorting_out_nwb_file_v2
         from run_kilosort2_5 import run_kilosort2_5
         from common.make_int16_recording import make_int16_recording
         from common.print_elapsed_time import print_elapsed_time, start_timer
@@ -96,14 +96,13 @@ class Kilosort2_5Processor(ProcessorBase):
 
         print('Writing output NWB file')
         h5_file = h5py.File(ff, 'r')
-        with pynwb.NWBHDF5IO(file=h5_file, mode='r', load_namespaces=True) as io:
-            nwbfile_rec = io.read()
-
-            if not os.path.exists('output'):
-                os.mkdir('output')
-            sorting_out_fname = 'output/sorting.nwb'
-
-            create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
+        if not os.path.exists('output'):
+            os.mkdir('output')
+        sorting_out_fname = 'output/sorting.nwb'
+        # with pynwb.NWBHDF5IO(file=h5_file, mode='r', load_namespaces=True) as io:
+        #     nwbfile_rec = io.read()
+        #     create_sorting_out_nwb_file(nwbfile_rec=nwbfile_rec, sorting=sorting, sorting_out_fname=sorting_out_fname)
+        create_sorting_out_nwb_file_v2(recording_h5_file=h5_file, sorting=sorting, sorting_out_fname=sorting_out_fname)
         print_elapsed_time()
 
         print('Uploading output NWB file')

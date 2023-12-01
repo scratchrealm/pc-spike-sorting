@@ -1,0 +1,33 @@
+name: Build mearec image and push to GCR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "mearec/**"
+  workflow_dispatch:
+
+jobs:
+  publish-docker-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Docker image
+        run: |
+          NAME="mearec" && \
+          docker buildx build --push \
+          -t ghcr.io/scratchrealm/pc-$NAME:latest \
+          --cache-to type=inline \
+          --cache-from type=registry,ref=ghcr.io/scratchrealm/pc-$NAME:latest \
+          -f ./$NAME/Dockerfile .

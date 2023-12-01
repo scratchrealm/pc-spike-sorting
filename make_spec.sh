@@ -19,3 +19,6 @@ dendro make-app-spec-file --app-dir spike_sorting_utils --spec-output-file spike
 
 # mountainsort5_dev
 dendro make-app-spec-file --app-dir mountainsort5_dev --spec-output-file mountainsort5_dev/spec.json
+
+# mearec
+dendro make-app-spec-file --app-dir mearec --spec-output-file mearec/spec.json

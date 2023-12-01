@@ -1,0 +1,31 @@
+{
+    "name": "mearec",
+    "description": "Fast and customuzable biophysical simulation of extracellular recordings.",
+    "appImage": "ghcr.io/scratchrealm/pc-mearec:latest",
+    "appExecutable": "/app/main.py",
+    "executable": "/app/main.py",
+    "processors": [
+        {
+            "name": "mearec_generate_templates",
+            "description": "Generate templates for use in MEArec simulations",
+            "label": "MEArec generate templates",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "output",
+                    "description": "Output .templates.h5 file"
+                }
+            ],
+            "parameters": [],
+            "attributes": [],
+            "tags": [
+                {
+                    "tag": "spike_sorting"
+                },
+                {
+                    "tag": "mearec_generate_templates"
+                }
+            ]
+        }
+    ]
+}

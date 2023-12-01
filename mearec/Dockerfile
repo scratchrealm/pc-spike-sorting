@@ -10,6 +10,9 @@ RUN pip install LFPy>=2.2
 RUN pip install MEArec
 RUN pip install MEArec[templates]
 
+# This creates the cell models in /root/.config/mearec/...
+RUN mearec default-config
+
 # Install dendro
 RUN pip install dendro==0.1.18
 

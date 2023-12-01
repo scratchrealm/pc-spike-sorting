@@ -1,3 +1,4 @@
+# Note: neuron python package is not compatible with more recent versions of python
 FROM python:3.8
 
 # Install openmpi

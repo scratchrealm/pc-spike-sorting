@@ -35,17 +35,23 @@ class MearecGenerateTemplatesProcessor(ProcessorBase):
         home_dir = os.path.expanduser('~')
         cell_models_folder = f'{home_dir}/.config/mearec/{mr.__version__}/cell_models/bbp'
 
+        params = {
+            **context.intracellular.dict(),
+            **context.extracellular.dict(),
+            **context.drift.dict()
+        }
+
         print('Generating templates')
         tempgen = mr.gen_templates(
             cell_models_folder=cell_models_folder,
-            params=None,
+            params=params,
             templates_tmp_folder=None,
             intraonly=False,
             parallel=True,
             recompile=False,
             n_jobs=None,
             delete_tmp=True,
-            verbose=True
+            verbose=False
         )
         print_elapsed_time()
 

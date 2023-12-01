@@ -33,7 +33,7 @@ class MearecGenerateTemplatesProcessor(ProcessorBase):
         start_timer()
 
         home_dir = os.path.expanduser('~')
-        cell_models_folder = f'{home_dir}/.config/mearec/1.9.0/cell_models/bbp'
+        cell_models_folder = f'{home_dir}/.config/mearec/{mr.__version__}/cell_models/bbp'
 
         print('Generating templates')
         tempgen = mr.gen_templates(

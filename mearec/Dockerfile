@@ -15,4 +15,4 @@ RUN pip install dendro==0.1.18
 
 # Copy files into the container
 RUN mkdir /app
-COPY mountainsort5/*.py /app/
+COPY mearec/*.py /app/

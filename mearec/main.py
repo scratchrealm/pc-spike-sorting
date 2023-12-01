@@ -18,7 +18,6 @@ class MearecGenerateTemplatesProcessor(ProcessorBase):
     name = 'mearec_generate_templates'
     label = 'MEArec generate templates'
     description = 'Generate templates for use in MEArec simulations'
-    # important tags for the frontend: 'spike_sorter' and 'mountainsort5'
     tags = ['spike_sorting', 'mearec_generate_templates']
     attributes = {
     }

@@ -15,7 +15,7 @@ RUN pip install MEArec[templates]
 RUN mearec default-config
 
 # Install dendro
-RUN pip install dendro==0.1.20
+RUN pip install dendro==0.1.21.dev2
 
 # Copy files into the container
 RUN mkdir /app

@@ -137,7 +137,7 @@
                     "name": "keep_good_only",
                     "description": "If True only 'good' units are returned",
                     "type": "bool",
-                    "default": true
+                    "default": false
                 },
                 {
                     "name": "skip_kilosort_preprocessing",
@@ -314,7 +314,7 @@
                     "name": "keep_good_only",
                     "description": "If True only 'good' units are returned",
                     "type": "bool",
-                    "default": true
+                    "default": false
                 },
                 {
                     "name": "skip_kilosort_preprocessing",

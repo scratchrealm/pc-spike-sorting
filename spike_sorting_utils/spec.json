@@ -29,8 +29,7 @@
                 {
                     "name": "electrical_series_path",
                     "description": "Path to the electrical series in the recording NWB file, e.g., /acquisition/ElectricalSeries",
-                    "type": "str",
-                    "default": null
+                    "type": "str"
                 }
             ],
             "attributes": [

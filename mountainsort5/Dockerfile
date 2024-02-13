@@ -18,7 +18,7 @@ RUN pip install mountainsort5==0.3.3
 RUN git clone https://github.com/flatironinstitute/dendro.git /src/dendro \
     && cd /src/dendro/python \
     && git checkout file-cache \
-    && pip install -e . && echo "1"
+    && pip install -e . && echo "2"
 
 # Copy files into the container
 RUN mkdir /app
